@@ -1,5 +1,8 @@
 """ coder and decoder file """
 
+import tkinter
+from tkinter import filedialog, messagebox
+
 base = {',':'!','.':'?','?':'.','!':',',
         ' ':'¿','a':'x','b':'y','c':'z',
         'd':'a','e':'b','f':'c','g':'d',
@@ -55,31 +58,26 @@ def co_decode(script, level, code):
     return content
 
 
-import tkinter
-
 parent = tkinter.Tk() # Create the object
 parent.overrideredirect(1) # Avoid it appearing and then disappearing quickly
 parent.withdraw() # Hide the window as we do not want to see this one
 
-from tkinter import filedialog, messagebox
-
-# After creating parent...
-
-
-file_types = [('All files', '*')] # Initially can select any .py or .pyw files but can change the selection to anything (*)
+file_types = [('All files', '*')]
 
 # Ask the user to select a one or more file names.
-file_names = filedialog.askopenfilenames(title='Select one or more files', filetypes=file_types, parent=parent)
+file_names = filedialog.askopenfilenames(title='Select one or more files',
+                                        filetypes=file_types, parent=parent)
 
 if len(file_names) > 0:
-    yesno = messagebox.askyesno('What do you want to do?', 'Press yes to code and no to decode', parent=parent)
+    yesno = messagebox.askyesno('What do you want to do?',
+                                'Press yes to code and no to decode', parent=parent)
 
 
     for each in file_names:
         with open(each, 'r', encoding='utf8') as file:
             result = co_decode(file, level=5, code=yesno)
         ext = "."+each.split(".")[len(each.split("."))-1]
-        end = "-coded" if yesno else "-decoded"
-        filename = each.split(".")[0] + end + ext
+        END = "-coded" if yesno else "-decoded"
+        filename = each.split(".")[0] + END + ext
         with open(filename, 'w', encoding='utf8') as file_encoded:
             file_encoded.write(result)
