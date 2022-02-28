@@ -101,7 +101,7 @@ if len(file_names) > 0:
         with open(each, 'rb') as file:
             
             filename = get_filename(each, yesno)
-            if not is_binary(file.read(1024)):
+            if is_binary(file.read(1024)):
                 file.close()
                 with open(each, 'rb') as file:
                     binary = True
