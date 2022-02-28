@@ -2,9 +2,11 @@
 
 import tkinter
 from tkinter import filedialog, messagebox
+import base64
+import re
 
-base = {',':'!','.':'?','?':'.','!':',',
-        ' ':'¿','a':'x','b':'y','c':'z',
+base = {'+':'<','/':'/',',':'!','.':'?',
+        ' ':' ','a':'x','b':'y','c':'z',
         'd':'a','e':'b','f':'c','g':'d',
         'h':'e','i':'f','j':'g','k':'h',
         'l':'i','m':'j','n':'k','ñ':'l',
@@ -20,10 +22,10 @@ base = {',':'!','.':'?','?':'.','!':',',
         'X':'U','Y':'V','Z':'W','0':'3',
         '1':'4','2':'5','3':'6','4':'7',
         '5':'8','6':'9','7':'0','8':'1',
-        '9':'2'}
+        '9':'2','?':'.','!':',','':'','=':'='}
 
-yxpb = {'!':',','?':'.','.':'?',',':'!',
-        '¿':' ','x':'a','y':'b','z':'c',
+yxpb = {'<':'+','/':'/','!':',','?':'.',
+        ' ':' ','x':'a','y':'b','z':'c',
         'a':'d','b':'e','c':'f','d':'g',
         'e':'h','f':'i','g':'j','h':'k',
         'i':'l','j':'m','k':'n','l':'ñ',
@@ -39,7 +41,7 @@ yxpb = {'!':',','?':'.','.':'?',',':'!',
         'U':'X','V':'Y','W':'Z','3':'0',
         '4':'1','5':'2','6':'3','7':'4',
         '8':'5','9':'6','0':'7','1':'8',
-        '2':'9'}
+        '2':'9','.':'?',',':'!','':'','=':'='}
 
 def co_decode(script, level, code):
     """ code or decode file character by character acording to "code" variable value """
@@ -54,9 +56,29 @@ def co_decode(script, level, code):
                         content = content + yxpb[character]
                 except KeyError:
                     content = content + character
+                    print(character)
             line = content
     return content
 
+def co_decode_binary(binary, code, filename):
+    """ code or decode binary file getting base64 encoding """
+    with open(filename,'wb') as f2:
+       while True:
+            buf=binary.read(1024)
+            if buf:
+                b64_encode = base64.b64encode(buf)
+                coded = co_decode(b64_encode.decode(), level=1, code=code)
+                decoded = co_decode(coded, level=1, code=False)
+                f2.write(base64.b64decode(decoded.encode()))
+            else:
+                f2.close()
+                break
+
+
+def get_filename(each, yesno):
+    ext = "."+each.split(".")[len(each.split("."))-1]
+    END = "-coded" if yesno else "-decoded"
+    return each.split(".")[0] + END + ext
 
 parent = tkinter.Tk() # Create the object
 parent.overrideredirect(1) # Avoid it appearing and then disappearing quickly
@@ -68,16 +90,28 @@ file_types = [('All files', '*')]
 file_names = filedialog.askopenfilenames(title='Select one or more files',
                                         filetypes=file_types, parent=parent)
 
+textchars = bytearray({7,8,9,10,12,13,27} | set(range(0x20, 0x100)) - {0x7f})
+is_binary = lambda bytes: bool(bytes.translate(None, textchars))
+
 if len(file_names) > 0:
     yesno = messagebox.askyesno('What do you want to do?',
-                                'Press yes to code and no to decode', parent=parent)
-
-
+                                'Press YES to CODE and NO to DECODE', parent=parent)
+    binary = False
     for each in file_names:
-        with open(each, 'r', encoding='utf8') as file:
-            result = co_decode(file, level=5, code=yesno)
-        ext = "."+each.split(".")[len(each.split("."))-1]
-        END = "-coded" if yesno else "-decoded"
-        filename = each.split(".")[0] + END + ext
-        with open(filename, 'w', encoding='utf8') as file_encoded:
-            file_encoded.write(result)
+        with open(each, 'rb') as file:
+            
+            filename = get_filename(each, yesno)
+            if not is_binary(file.read(1024)):
+                file.close()
+                with open(each, 'rb') as file:
+                    binary = True
+                    result = co_decode_binary(file, code=yesno, filename=filename)
+            else:
+                binary = False
+                with open(each, 'r', encoding='utf8') as file:
+                    result = co_decode(file, level=1, code=yesno) 
+
+        if not binary:
+            with open(filename, 'w', encoding='utf8') as file_encoded:
+                file_encoded.write(result)
+                file_encoded.close()
