@@ -69,11 +69,40 @@ def co_decode_binary(binary, code, filename):
                 b64_encode = base64.b64encode(buf)
                 coded = co_decode(b64_encode.decode(), level=1, code=code)
                 decoded = co_decode(coded, level=1, code=False)
-                f2.write(base64.b64decode(decoded.encode()))
+                print(len(str(coded.encode())))
+                print(len(coded.encode()))
+                print(len(str(coded.encode())) == len(coded.encode()))
+                if len(coded.encode())%4 != 0:
+                    new_coded = fix_characters_number(coded)
+                    print(coded.encode())
+                    print(new_coded)
+                    f2.write(base64.b64decode(new_coded))
+                else:
+                    f2.write(base64.b64decode(coded.encode()))
             else:
                 f2.close()
                 break
 
+def fix_characters_number(coded):
+    
+    def remove_extras(new_coded):
+        return new_coded[2:len(new_coded)][:-1]
+
+    founded = False
+    new_coded = coded
+    while not founded:
+        for _ in range(3):
+            new_coded = str(new_coded.encode())[:-1] + "='"
+            if len(new_coded) %4 == 0:
+                founded = True
+                return new_coded
+        new_coded = coded
+        for i in range(3):
+            new_coded = str(new_coded.encode())[:-(i+2)] + "'"
+            if len(new_coded) %4 == 0:
+                founded = True
+                return new_coded
+    return new_coded
 
 def get_filename(each, yesno):
     ext = "."+each.split(".")[len(each.split("."))-1]
