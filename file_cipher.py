@@ -60,54 +60,48 @@ def co_decode(script, level, code):
             line = content
     return content
 
-def co_decode_binary(binary, code, filename):
+def code_binary(binary, code, filename):
     """ code or decode binary file getting base64 encoding """
-    with open(filename,'wb') as f2:
+    with open(filename.split('.')[0]+'.txt','wb') as f2:
+       coded = ""
        while True:
             buf=binary.read(1024)
             if buf:
                 b64_encode = base64.b64encode(buf)
-                coded = co_decode(b64_encode.decode(), level=1, code=code)
+                coded = coded + co_decode(b64_encode.decode(), level=1, code=code)
                 decoded = co_decode(coded, level=1, code=False)
-                print(len(str(coded.encode())))
-                print(len(coded.encode()))
-                print(len(str(coded.encode())) == len(coded.encode()))
-                if len(coded.encode())%4 != 0:
-                    new_coded = fix_characters_number(coded)
-                    print(coded.encode())
-                    print(new_coded)
-                    f2.write(base64.b64decode(new_coded))
-                else:
-                    f2.write(base64.b64decode(coded.encode()))
             else:
+                f2.write(coded.encode())
+                f2.write(("."+filename.split(".")[len(filename.split("."))-1]).encode())
                 f2.close()
                 break
 
-def fix_characters_number(coded):
-    
-    def remove_extras(new_coded):
-        return new_coded[2:len(new_coded)][:-1]
-
-    founded = False
-    new_coded = coded
-    while not founded:
-        for _ in range(3):
-            new_coded = str(new_coded.encode())[:-1] + "='"
-            if len(new_coded) %4 == 0:
-                founded = True
-                return new_coded
-        new_coded = coded
-        for i in range(3):
-            new_coded = str(new_coded.encode())[:-(i+2)] + "'"
-            if len(new_coded) %4 == 0:
-                founded = True
-                return new_coded
-    return new_coded
+def decode_binary(each, file_read, level, code, filename):
+    with open(each, 'r') as file:
+        output_extension = file_read.split(".")[1]
+        output_filename = filename.split(".")[0] + '.'+output_extension
+        with open(output_filename, 'wb') as out:
+            decoded = ""
+            while True:
+                 buf=file.read(1024)
+                 if buf:
+                    if len(str(buf).split(".")) > 1:
+                        buf = str(buf).split(".")[0]
+                    decoded = decoded + co_decode(buf, level=1, code=False)
+                 else:
+                    out.write(base64.b64decode(decoded.encode()))
+                    out.close()
+                    break
 
 def get_filename(each, yesno):
     ext = "."+each.split(".")[len(each.split("."))-1]
     END = "-coded" if yesno else "-decoded"
     return each.split(".")[0] + END + ext
+
+def write_not_binary(filename, result):
+    with open(filename, 'w', encoding='utf8') as file_encoded:
+        file_encoded.write(result)
+        file_encoded.close()
 
 parent = tkinter.Tk() # Create the object
 parent.overrideredirect(1) # Avoid it appearing and then disappearing quickly
@@ -125,22 +119,27 @@ is_binary = lambda bytes: bool(bytes.translate(None, textchars))
 if len(file_names) > 0:
     yesno = messagebox.askyesno('What do you want to do?',
                                 'Press YES to CODE and NO to DECODE', parent=parent)
-    binary = False
+    binary = False    
     for each in file_names:
-        with open(each, 'rb') as file:
-            
-            filename = get_filename(each, yesno)
-            if is_binary(file.read(1024)):
-                file.close()
-                with open(each, 'rb') as file:
-                    binary = True
-                    result = co_decode_binary(file, code=yesno, filename=filename)
-            else:
-                binary = False
-                with open(each, 'r', encoding='utf8') as file:
-                    result = co_decode(file, level=1, code=yesno) 
-
-        if not binary:
-            with open(filename, 'w', encoding='utf8') as file_encoded:
-                file_encoded.write(result)
-                file_encoded.close()
+        filename = get_filename(each, yesno)
+        if yesno:
+            with open(each, 'rb') as file:
+                if is_binary(file.read(1024)):
+                    file.close()
+                    with open(each, 'rb') as file:
+                        binary = True
+                        result = code_binary(file, code=True, filename=filename)
+                else:
+                    binary = False
+                    with open(each, 'r', encoding='utf8') as file:
+                        result = co_decode(file, level=1, code=True) 
+            if not binary:
+                write_not_binary(filename, result)
+        else:
+            with open(each, 'r', encoding='utf8') as file:
+                file_read = file.read()
+                if len(str(file_read).split('.')) == 0:
+                    result = co_decode(file, level=1, code=False)
+                    write_not_binary(filename, result)
+                else:
+                    decode_binary(each, file_read=file_read, level=1, code=False, filename=filename)
