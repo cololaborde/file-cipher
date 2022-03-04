@@ -65,7 +65,7 @@ def code_binary(binary, code, filename):
     with open(filename.split('.')[0]+'.txt','wb') as f2:
        coded = ""
        while True:
-            buf=binary.read(1024)
+            buf=binary.read()
             if buf:
                 b64_encode = base64.b64encode(buf)
                 coded = coded + co_decode(b64_encode.decode(), level=1, code=code)
@@ -83,7 +83,7 @@ def decode_binary(each, file_read, level, code, filename):
         with open(output_filename, 'wb') as out:
             decoded = ""
             while True:
-                 buf=file.read(1024)
+                 buf=file.read()
                  if buf:
                     if len(str(buf).split(".")) > 1:
                         buf = str(buf).split(".")[0]
