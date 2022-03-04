@@ -58,39 +58,25 @@ def co_decode(script, level, code):
             line = content
     return content
 
-def code_binary(binary, level, filename):
+def code_binary(readed_file, level, filename):
     """ code binary file getting base64 encoding """
     with open(filename.split('.')[0]+'.txt','wb') as out:
-        coded = ""
-        while True:
-            buf=binary.read()
-            if buf:
-                b64_encode = base64.b64encode(buf)
-                coded = coded + co_decode(b64_encode.decode(), level=level, code=True)
-            else:
-                out.write(coded.encode())
-                out.write(("."+filename.split(".")[len(filename.split("."))-1]).encode())
-                out.close()
-                break
+        b64_encode = base64.b64encode(readed_file)
+        coded = co_decode(b64_encode.decode(), level=level, code=True)
+        out.write(coded.encode())
+        out.write(("."+filename.split(".")[len(filename.split("."))-1]).encode())
+        out.close()
 
-def decode_binary(each, file_read, level, filename):
+def decode_binary(readed_file, level, filename):
     """ decode binary file reading enconding from txt file """
-    with open(each, 'r', encoding='utf-8') as file:
-        output_extension = file_read.split(".")[1]
-        output_filename = filename.split(".")[0] + '.'+output_extension
-        with open(output_filename, 'wb') as out:
-            decoded = ""
-            while True:
-                buf=file.read()
-                print(buf == file_read)
-                if buf:
-                    if len(str(buf).split(".")) > 1:
-                        buf = str(file_read).split(".", maxsplit=1)[0]
-                    decoded = decoded + co_decode(buf, level=level, code=False)
-                else:
-                    out.write(base64.b64decode(decoded.encode()))
-                    out.close()
-                    break
+    output_extension = readed_file.split(".")[1]
+    output_filename = filename.split(".")[0] + '.'+output_extension
+    with open(output_filename, 'wb') as out:
+        if len(str(readed_file).split(".")) > 1:
+            readed_file = str(readed_file).split(".", maxsplit=1)[0]
+        decoded = co_decode(readed_file, level=level, code=False)
+        out.write(base64.b64decode(decoded.encode()))
+        out.close()
 
 def get_filename(each, yesno):
     """return filename determining if file was coded or decoded"""
@@ -115,8 +101,9 @@ if len(file_names) > 0:
         filename = get_filename(each, YESNO)
         if YESNO:
             with open(each, 'rb') as file:
-                code_binary(file, level=1, filename=filename)
+                file_read = file.read()
+                code_binary(readed_file=file_read, level=1, filename=filename)
         else:
             with open(each, 'r', encoding='utf8') as file:
                 file_read = file.read()
-                decode_binary(each, file_read=file_read, level=1, filename=filename)
+                decode_binary(readed_file=file_read, level=1, filename=filename)
