@@ -58,19 +58,19 @@ def co_decode(script, level, code):
             line = content
     return content
 
-def code_binary(readed_file, level, filename):
+def code_binary(readed_file, level, filepath):
     """ code binary file getting base64 encoding """
-    with open(filename.split('.')[0]+'.txt','wb') as out:
+    with open(filepath.split('.')[0]+'.txt','wb') as out:
         b64_encode = base64.b64encode(readed_file)
         coded = co_decode(b64_encode.decode(), level=level, code=True)
         out.write(coded.encode())
-        out.write(("."+filename.split(".")[len(filename.split("."))-1]).encode())
+        out.write(("."+filepath.split(".")[len(filepath.split("."))-1]).encode())
         out.close()
 
-def decode_binary(readed_file, level, filename):
+def decode_binary(readed_file, level, filepath):
     """ decode binary file reading enconding from txt file """
     output_extension = readed_file.split(".")[1]
-    output_filename = filename.split(".")[0] + '.'+output_extension
+    output_filename = filepath.split(".")[0] + '.'+output_extension
     with open(output_filename, 'wb') as out:
         if len(str(readed_file).split(".")) > 1:
             readed_file = str(readed_file).split(".", maxsplit=1)[0]
@@ -78,11 +78,11 @@ def decode_binary(readed_file, level, filename):
         out.write(base64.b64decode(decoded.encode()))
         out.close()
 
-def get_filename(each, yesno):
+def get_filename(filepath, yesno):
     """return filename determining if file was coded or decoded"""
-    ext = "."+each.split(".")[len(each.split("."))-1]
+    ext = "."+filepath.split(".")[len(filepath.split("."))-1]
     end = "-coded" if yesno else "-decoded"
-    return each.split(".")[0] + end + ext
+    return filepath.split(".")[0] + end + ext
 
 
 parent = tkinter.Tk() # Create the object
@@ -102,8 +102,8 @@ if len(file_names) > 0:
         if YESNO:
             with open(each, 'rb') as file:
                 file_read = file.read()
-                code_binary(readed_file=file_read, level=1, filename=filename)
+                code_binary(readed_file=file_read, level=1, filepath=filename)
         else:
             with open(each, 'r', encoding='utf8') as file:
                 file_read = file.read()
-                decode_binary(readed_file=file_read, level=1, filename=filename)
+                decode_binary(readed_file=file_read, level=1, filepath=filename)
