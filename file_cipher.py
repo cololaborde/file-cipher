@@ -56,7 +56,6 @@ def co_decode(script, level, code):
                         content = content + yxpb[character]
                 except KeyError:
                     content = content + character
-                    print(character)
             line = content
     return content
 
@@ -69,7 +68,6 @@ def code_binary(binary, code, filename):
             if buf:
                 b64_encode = base64.b64encode(buf)
                 coded = coded + co_decode(b64_encode.decode(), level=1, code=code)
-                decoded = co_decode(coded, level=1, code=False)
             else:
                 f2.write(coded.encode())
                 f2.write(("."+filename.split(".")[len(filename.split("."))-1]).encode())
@@ -98,10 +96,6 @@ def get_filename(each, yesno):
     END = "-coded" if yesno else "-decoded"
     return each.split(".")[0] + END + ext
 
-def write_not_binary(filename, result):
-    with open(filename, 'w', encoding='utf8') as file_encoded:
-        file_encoded.write(result)
-        file_encoded.close()
 
 parent = tkinter.Tk() # Create the object
 parent.overrideredirect(1) # Avoid it appearing and then disappearing quickly
@@ -113,33 +107,14 @@ file_types = [('All files', '*')]
 file_names = filedialog.askopenfilenames(title='Select one or more files',
                                         filetypes=file_types, parent=parent)
 
-textchars = bytearray({7,8,9,10,12,13,27} | set(range(0x20, 0x100)) - {0x7f})
-is_binary = lambda bytes: bool(bytes.translate(None, textchars))
-
 if len(file_names) > 0:
-    yesno = messagebox.askyesno('What do you want to do?',
-                                'Press YES to CODE and NO to DECODE', parent=parent)
-    binary = False    
+    yesno = messagebox.askquestion(None, "Code (YES) or Decode (NO)?", icon ='question')
     for each in file_names:
         filename = get_filename(each, yesno)
         if yesno:
             with open(each, 'rb') as file:
-                if is_binary(file.read(1024)):
-                    file.close()
-                    with open(each, 'rb') as file:
-                        binary = True
-                        result = code_binary(file, code=True, filename=filename)
-                else:
-                    binary = False
-                    with open(each, 'r', encoding='utf8') as file:
-                        result = co_decode(file, level=1, code=True) 
-            if not binary:
-                write_not_binary(filename, result)
+                result = code_binary(file, code=True, filename=filename)
         else:
             with open(each, 'r', encoding='utf8') as file:
                 file_read = file.read()
-                if len(str(file_read).split('.')) == 0:
-                    result = co_decode(file, level=1, code=False)
-                    write_not_binary(filename, result)
-                else:
-                    decode_binary(each, file_read=file_read, level=1, code=False, filename=filename)
+                decode_binary(each, file_read=file_read, level=1, code=False, filename=filename)
