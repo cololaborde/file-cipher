@@ -4,8 +4,8 @@ import tkinter
 from tkinter import filedialog, messagebox
 import base64
 
-base = {'+':'<','/':'/',',':'!','.':'?',
-        ' ':' ','a':'x','b':'y','c':'z',
+base = {'+':'<','/':'>',',':'!','.':'?',
+        ' ':'¿','a':'x','b':'y','c':'z',
         'd':'a','e':'b','f':'c','g':'d',
         'h':'e','i':'f','j':'g','k':'h',
         'l':'i','m':'j','n':'k','ñ':'l',
@@ -21,10 +21,10 @@ base = {'+':'<','/':'/',',':'!','.':'?',
         'X':'U','Y':'V','Z':'W','0':'3',
         '1':'4','2':'5','3':'6','4':'7',
         '5':'8','6':'9','7':'0','8':'1',
-        '9':'2','?':'.','!':',','':'','=':'='}
+        '9':'2','?':'.','!':',','':'','=':'-'}
 
-yxpb = {'<':'+','/':'/','!':',','?':'.',
-        ' ':' ','x':'a','y':'b','z':'c',
+yxpb = {'<':'+','>':'/','!':',','?':'.',
+        '¿':' ','x':'a','y':'b','z':'c',
         'a':'d','b':'e','c':'f','d':'g',
         'e':'h','f':'i','g':'j','h':'k',
         'i':'l','j':'m','k':'n','l':'ñ',
@@ -40,7 +40,7 @@ yxpb = {'<':'+','/':'/','!':',','?':'.',
         'U':'X','V':'Y','W':'Z','3':'0',
         '4':'1','5':'2','6':'3','7':'4',
         '8':'5','9':'6','0':'7','1':'8',
-        '2':'9','.':'?',',':'!','':'','=':'='}
+        '2':'9','.':'?',',':'!','':'','-':'='}
 
 def co_decode(script, level, code):
     """ code or decode file character by character acording to "code" variable value """
@@ -60,17 +60,20 @@ def co_decode(script, level, code):
 
 def code_binary(readed_file, level, filepath):
     """ code binary file getting base64 encoding """
-    with open(filepath.split('.')[0]+'.txt','wb') as out:
+    with open(filepath.split('.')[0] + '.txt','wb') as out:
         b64_encode = base64.b64encode(readed_file)
         coded = co_decode(b64_encode.decode(), level=level, code=True)
         out.write(coded.encode())
-        out.write(("."+filepath.split(".")[len(filepath.split("."))-1]).encode())
+        extension = filepath.split(".")[len(filepath.split("."))-1]
+        coded_extension = co_decode(extension, level=level, code=True)
+        out.write(("."+coded_extension).encode())
         out.close()
 
 def decode_binary(readed_file, level, filepath):
-    """ decode binary file reading enconding from txt file """
+    """ decode binary file reading base64 enconding from txt file """
     output_extension = readed_file.split(".")[1]
-    output_filename = filepath.split(".")[0] + '.'+output_extension
+    decoded_output_ext = co_decode(output_extension, level=level, code=False)
+    output_filename = filepath.split(".")[0] + '.' + decoded_output_ext
     with open(output_filename, 'wb') as out:
         if len(str(readed_file).split(".")) > 1:
             readed_file = str(readed_file).split(".", maxsplit=1)[0]
