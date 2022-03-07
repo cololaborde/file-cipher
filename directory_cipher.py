@@ -1,4 +1,4 @@
-""" coder and decoder file """
+""" files in a directory encoder/decoder, removing the originals """
 
 import tkinter
 from tkinter import filedialog, messagebox

@@ -1,4 +1,4 @@
-""" dictionary generator to use file file_cipher.py """
+""" dictionary generator """
 
 import random
 
