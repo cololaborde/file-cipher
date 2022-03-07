@@ -15,8 +15,8 @@ chars = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h',
 
 def create():
     """ generate and return codification/decodification dictionary """
-    b = {}
-    y = {}
+    to_code = {}
+    to_decode = {}
 
     keys = chars.copy()
     values = chars.copy()
@@ -30,17 +30,17 @@ def create():
             if value != key:
                 keys.pop(index)
                 values.pop(index_value)
-                b[key] = value
-                y[value] = key
+                to_code[key] = value
+                to_decode[value] = key
                 break
         if len(keys) == 0:
             break
 
     #because the indentation is important to keep in a base64 file
-    b['']=''
-    y['']=''
+    to_code['']=''
+    to_decode['']=''
 
-    return b, y
+    return to_code, to_decode
 
 base, yxpb = create()
 
