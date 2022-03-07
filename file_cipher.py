@@ -3,6 +3,7 @@
 import tkinter
 from tkinter import filedialog, messagebox
 import base64
+from tqdm import tqdm
 
 base = {'I': 'B', 'E': 'Ñ', 'Q': 'm', '=': 'G', 'j': 'Z', 'V': '5', 't': 'I', '5': 'u', 'f': 'b', ',': 'H', '1': 'o', 'W': 'z', 'p': '9', 'e': 'c', 'O': 'g', '<': 'R', 'Z': '¿', '?': 'w', 'B': 'P', '6': 'U', 'H': 'x', '¡': 'e', '>': 'a', '_': 'M', '7': 'l', 'l': 'd', 'b': 'E', 'D': 'C', '2': 'y', '[': '=', 'a': 'X', 'L': 'ñ', 'g': ';', ':': 'T', 'u': 'A', '¿': 's', 'c': 'W', 'Ñ': 'D', 'z': 'p', ']': 'J', 'N': '8', 'x': 'k', 'r': 'F', 'X': 'h', '!': 'j', 'v': '1', ' ': '?', 'J': 'L', 'm': '6', 'ñ': 'r', 'G': '>', '8': 'i', 's': 'Q', 'w': 'K', 'o': '7', ';': ',', 'k': 'S', 'U': '¡', 'M': ':', 'F': '4', 'K': 'V', 'h': '_', 'S': '/', 'A': 'n', '/': 'f', 'q': '+', 'R': 'N', 'Y': '[', 'y': 'q', '-': ' ', '+': '-', '9': 't', 'i': 'Y', '3': '<', 'd': 'v', '4': '2', 'n': '3', 'T': 'O', 'C': ']', 'P': '!', '': ''}
 
@@ -12,8 +13,9 @@ yxpb = {'B': 'I', 'Ñ': 'E', 'm': 'Q', 'G': '=', 'Z': 'j', '5': 'V', 'I': 't', '
 def co_decode(script, level, code):
     """ code or decode file character by character acording to "code" variable value """
     content = ""
+    pb_title = 'Coding' if code else 'Decoding'
     for _ in range(int(level)):
-        for line in script:
+        for line in tqdm(script, desc=pb_title):
             for character in line:
                 try:
                     if code:
