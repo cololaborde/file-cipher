@@ -13,31 +13,36 @@ chars = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h',
      ']', ' ', '_', '!', '¡', ':', ';', '1',
      '2', '3', '4', '5', '6', '7', '8', '9']
 
-base = {}
-yxpb = {}
+def create():
+    """ generate and return codification/decodification dictionary """
+    b = {}
+    y = {}
 
-keys = chars.copy()
-values = chars.copy()
+    keys = chars.copy()
+    values = chars.copy()
 
-
-while True:
-    index = random.randint(0, len(keys)-1)
-    key = keys[index]
     while True:
-        index_value = random.randint(0, len(values)-1)
-        value = values[index_value]
-        if value != key:
-            keys.pop(index)
-            values.pop(index_value)
-            base[key] = value
-            yxpb[value] = key
+        index = random.randint(0, len(keys)-1)
+        key = keys[index]
+        while True:
+            index_value = random.randint(0, len(values)-1)
+            value = values[index_value]
+            if value != key:
+                keys.pop(index)
+                values.pop(index_value)
+                b[key] = value
+                y[value] = key
+                break
+        if len(keys) == 0:
             break
-    if len(keys) == 0:
-        break
 
-#because identation is important in base64 coded file
-base['']=''
-yxpb['']=''
+    #because the indentation is important to keep in a base64 file
+    b['']=''
+    y['']=''
+
+    return b, y
+
+base, yxpb = create()
 
 print('base = '+str(base))
 print('yxpb = '+str(yxpb))
