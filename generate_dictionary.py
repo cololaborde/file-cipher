@@ -1,8 +1,10 @@
-import random 
+""" dictionary generator to use file file_cipher.py """
+
+import random
 
 chars = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h',
-     'i', 'j', 'k', 'l', 'm', 'n', 'ñ', 'o', 
-     'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 
+     'i', 'j', 'k', 'l', 'm', 'n', 'ñ', 'o',
+     'p', 'q', 'r', 's', 't', 'u', 'v', 'w',
      'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E',
      'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
      'N', 'Ñ', 'O', 'P', 'Q', 'R', 'S', 'T',
@@ -32,11 +34,10 @@ while True:
             break
     if len(keys) == 0:
         break
-    
+
 #because identation is important in base64 coded file
 base['']=''
 yxpb['']=''
 
 print('base = '+str(base))
 print('yxpb = '+str(yxpb))
- 
