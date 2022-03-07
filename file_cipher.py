@@ -1,4 +1,4 @@
-""" file encoder/decoder """
+""" files encoder/decoder """
 
 import tkinter
 from tkinter import filedialog, messagebox
