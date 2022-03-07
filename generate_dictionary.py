@@ -1,6 +1,6 @@
 import random 
 
-a = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h',
+chars = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h',
      'i', 'j', 'k', 'l', 'm', 'n', 'ñ', 'o', 
      'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 
      'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E',
@@ -14,8 +14,8 @@ a = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h',
 base = {}
 yxpb = {}
 
-keys = a.copy()
-values = a.copy()
+keys = chars.copy()
+values = chars.copy()
 
 
 while True:
@@ -33,9 +33,10 @@ while True:
     if len(keys) == 0:
         break
     
-
+#because identation is important in base64 coded file
 base['']=''
 yxpb['']=''
-print(base)
-print(yxpb)
+
+print('base = '+str(base))
+print('yxpb = '+str(yxpb))
  
