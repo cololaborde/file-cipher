@@ -10,6 +10,16 @@ class Cipher():
 
     current_hash = ""
 
+    @classmethod
+    def get_current_hash(cls):
+        """ get current hash """
+        return cls.current_hash
+
+    @classmethod
+    def set_current_hash(cls, new_hash):
+        """ set current hash """
+        cls.current_hash = new_hash
+
     @staticmethod
     def get_mod_dict():
         """ return readed and converted to dict mod file """
@@ -21,8 +31,9 @@ class Cipher():
     def get_base_yxpb(self, mod):
         """ return selected random dicts """
         hash_list = list(mod)
-        self.current_hash = hash_list[random.randint(0, len(hash_list)-1)]
-        to_co_decode_dict = mod[self.current_hash]
+        new_hash = hash_list[random.randint(0, len(hash_list)-1)]
+        self.set_current_hash(new_hash)
+        to_co_decode_dict = mod[self.get_current_hash()]
         to_code = to_co_decode_dict['base']
         to_decode = to_co_decode_dict['yxpb']
         return to_code, to_decode
@@ -33,16 +44,16 @@ class Cipher():
 
         mod_dict = self.get_mod_dict()
         if code:
-            if self.current_hash != "":
-                base = mod_dict[self.current_hash]['base']
-                yxpb = mod_dict[self.current_hash]['yxpb']
+            if self.get_current_hash() != "":
+                base = mod_dict[self.get_current_hash()]['base']
+                yxpb = mod_dict[self.get_current_hash()]['yxpb']
             else:
                 base, yxpb = self.get_base_yxpb(mod_dict)
         else:
             if len(script.split('.')) > 1:
-                self.current_hash = script.split('.')[1]
-            base = mod_dict[self.current_hash]['base']
-            yxpb = mod_dict[self.current_hash]['yxpb']
+                self.set_current_hash(script.split('.')[1])
+            base = mod_dict[self.get_current_hash()]['base']
+            yxpb = mod_dict[self.get_current_hash()]['yxpb']
 
         content = ""
         pb_title = 'Coding' if code else 'Decoding'
@@ -65,12 +76,12 @@ class Cipher():
             b64_encode = base64.b64encode(readed_file)
             coded = self.co_decode(b64_encode.decode(), level=level, code=True)
             out.write(coded.encode())
-            out.write(('.' + self.current_hash).encode())
+            out.write(('.' + self.get_current_hash()).encode())
             extension = filepath.split(".")[len(filepath.split("."))-1]
             coded_extension = self.co_decode(extension, level=level, code=True)
             out.write(("."+coded_extension).encode())
             out.close()
-        self.current_hash = ""
+        self.set_current_hash("")
 
     def decode_binary(self, readed_file, level, filepath):
         """ decode binary file reading base64 enconding from txt file """
@@ -83,4 +94,4 @@ class Cipher():
                 readed_file = str(readed_file).split(".", maxsplit=1)[0]
             out.write(base64.b64decode(decoded.encode()))
             out.close()
-        self.current_hash = ""
+        self.set_current_hash("")
