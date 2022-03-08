@@ -14,6 +14,7 @@ class Cipher():
         """ encode or decode file character by character acording to "code" variable value """
         content = ""
         pb_title = 'Coding' if code else 'Decoding'
+        script = script.split('.')[0]
         for _ in range(int(level)):
             for line in tqdm(script, desc=pb_title):
                 for character in line:
@@ -40,12 +41,10 @@ class Cipher():
 
     def decode_binary(self, readed_file, level, filepath):
         """ decode binary file reading base64 enconding from txt file """
+        decoded = self.co_decode(readed_file, level=level, code=False)
         output_extension = readed_file.split(".")[1]
         decoded_output_ext = self.co_decode(output_extension, level=level, code=False)
         output_filename = filepath.split(".")[0] + '.' + decoded_output_ext
         with open(output_filename, 'wb') as out:
-            if len(str(readed_file).split(".")) > 1:
-                readed_file = str(readed_file).split(".", maxsplit=1)[0]
-            decoded = self.co_decode(readed_file, level=level, code=False)
             out.write(base64.b64decode(decoded.encode()))
             out.close()
