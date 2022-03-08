@@ -42,7 +42,23 @@ def create():
 
     return to_code, to_decode
 
-base, yxpb = create()
+def generate_hash():
+    """ create random hash """
+    aux_dict = chars.copy()
+    passwd = ""
+    for _ in range(10):
+        passwd = passwd + aux_dict[random.randint(0, (len(aux_dict) - 1))]
+    return passwd
 
-print('base = '+str(base))
-print('yxpb = '+str(yxpb))
+
+dict_of_dicts = {}
+
+for _ in range(100):
+    aux = {}
+    base, yxpb = create()
+    aux['base'] = base
+    aux['yxpb'] = yxpb
+    dict_of_dicts[generate_hash()] = aux
+
+with open('mod.txt', 'w') as out:
+    out.write(str(dict_of_dicts))

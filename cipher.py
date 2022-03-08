@@ -1,17 +1,49 @@
 """ encoder/decoder class """
 
 import base64
+import random
+import ast
 from tqdm import tqdm
 
 class Cipher():
     """ binary encoder/decoder """
 
-    base = {'I': 'B', 'E': 'Ñ', 'Q': 'm', '=': 'G', 'j': 'Z', 'V': '5', 't': 'I', '5': 'u', 'f': 'b', ',': 'H', '1': 'o', 'W': 'z', 'p': '9', 'e': 'c', 'O': 'g', '<': 'R', 'Z': '¿', '?': 'w', 'B': 'P', '6': 'U', 'H': 'x', '¡': 'e', '>': 'a', '_': 'M', '7': 'l', 'l': 'd', 'b': 'E', 'D': 'C', '2': 'y', '[': '=', 'a': 'X', 'L': 'ñ', 'g': ';', ':': 'T', 'u': 'A', '¿': 's', 'c': 'W', 'Ñ': 'D', 'z': 'p', ']': 'J', 'N': '8', 'x': 'k', 'r': 'F', 'X': 'h', '!': 'j', 'v': '1', ' ': '?', 'J': 'L', 'm': '6', 'ñ': 'r', 'G': '>', '8': 'i', 's': 'Q', 'w': 'K', 'o': '7', ';': ',', 'k': 'S', 'U': '¡', 'M': ':', 'F': '4', 'K': 'V', 'h': '_', 'S': '/', 'A': 'n', '/': 'f', 'q': '+', 'R': 'N', 'Y': '[', 'y': 'q', '-': ' ', '+': '-', '9': 't', 'i': 'Y', '3': '<', 'd': 'v', '4': '2', 'n': '3', 'T': 'O', 'C': ']', 'P': '!', '': ''}
+    current_hash = ""
 
-    yxpb = {'B': 'I', 'Ñ': 'E', 'm': 'Q', 'G': '=', 'Z': 'j', '5': 'V', 'I': 't', 'u': '5', 'b': 'f', 'H': ',', 'o': '1', 'z': 'W', '9': 'p', 'c': 'e', 'g': 'O', 'R': '<', '¿': 'Z', 'w': '?', 'P': 'B', 'U': '6', 'x': 'H', 'e': '¡', 'a': '>', 'M': '_', 'l': '7', 'd': 'l', 'E': 'b', 'C': 'D', 'y': '2', '=': '[', 'X': 'a', 'ñ': 'L', ';': 'g', 'T': ':', 'A': 'u', 's': '¿', 'W': 'c', 'D': 'Ñ', 'p': 'z', 'J': ']', '8': 'N', 'k': 'x', 'F': 'r', 'h': 'X', 'j': '!', '1': 'v', '?': ' ', 'L': 'J', '6': 'm', 'r': 'ñ', '>': 'G', 'i': '8', 'Q': 's', 'K': 'w', '7': 'o', ',': ';', 'S': 'k', '¡': 'U', ':': 'M', '4': 'F', 'V': 'K', '_': 'h', '/': 'S', 'n': 'A', 'f': '/', '+': 'q', 'N': 'R', '[': 'Y', 'q': 'y', ' ': '-', '-': '+', 't': '9', 'Y': 'i', '<': '3', 'v': 'd', '2': '4', '3': 'n', 'O': 'T', ']': 'C', '!': 'P', '': ''}
+    @staticmethod
+    def get_mod_dict():
+        """ return readed and converted to dict mod file """
+        with open('mod.txt', 'r', encoding='utf-8') as mod:
+            mod_read = mod.read()
+            mod_dict = ast.literal_eval(mod_read)
+            return mod_dict
+
+    def get_base_yxpb(self, mod):
+        """ return selected random dicts """
+        hash_list = list(mod)
+        self.current_hash = hash_list[random.randint(0, len(hash_list)-1)]
+        to_co_decode_dict = mod[self.current_hash]
+        to_code = to_co_decode_dict['base']
+        to_decode = to_co_decode_dict['yxpb']
+        return to_code, to_decode
+
 
     def co_decode(self, script, level, code):
         """ encode or decode file character by character acording to "code" variable value """
+
+        mod_dict = self.get_mod_dict()
+        if code:
+            if self.current_hash != "":
+                base = mod_dict[self.current_hash]['base']
+                yxpb = mod_dict[self.current_hash]['yxpb']
+            else:
+                base, yxpb = self.get_base_yxpb(mod_dict)
+        else:
+            if len(script.split('.')) > 1:
+                self.current_hash = script.split('.')[1]
+            base = mod_dict[self.current_hash]['base']
+            yxpb = mod_dict[self.current_hash]['yxpb']
+
         content = ""
         pb_title = 'Coding' if code else 'Decoding'
         for _ in range(int(level)):
@@ -19,9 +51,9 @@ class Cipher():
                 for character in line:
                     try:
                         if code:
-                            content = content + self.base[character]
+                            content = content + base[character]
                         else:
-                            content = content + self.yxpb[character]
+                            content = content + yxpb[character]
                     except KeyError:
                         content = content + character
                 line = content
@@ -33,19 +65,22 @@ class Cipher():
             b64_encode = base64.b64encode(readed_file)
             coded = self.co_decode(b64_encode.decode(), level=level, code=True)
             out.write(coded.encode())
+            out.write(('.' + self.current_hash).encode())
             extension = filepath.split(".")[len(filepath.split("."))-1]
             coded_extension = self.co_decode(extension, level=level, code=True)
             out.write(("."+coded_extension).encode())
             out.close()
+        self.current_hash = ""
 
     def decode_binary(self, readed_file, level, filepath):
         """ decode binary file reading base64 enconding from txt file """
-        output_extension = readed_file.split(".")[1]
+        decoded = self.co_decode(readed_file, level=level, code=False)
+        output_extension = readed_file.split(".")[len(readed_file.split("."))-1]
         decoded_output_ext = self.co_decode(output_extension, level=level, code=False)
         output_filename = filepath.split(".")[0] + '.' + decoded_output_ext
         with open(output_filename, 'wb') as out:
             if len(str(readed_file).split(".")) > 1:
                 readed_file = str(readed_file).split(".", maxsplit=1)[0]
-            decoded = self.co_decode(readed_file, level=level, code=False)
             out.write(base64.b64decode(decoded.encode()))
             out.close()
+        self.current_hash = ""
