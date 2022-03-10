@@ -3,9 +3,10 @@
 import tkinter
 from tkinter import filedialog, messagebox
 import os
-from static_cipher import Cipher
+from static_cipher import Cipher as static_cipher
+from dynamic_cipher import Cipher as dynamic_cipher
 
-cipher = Cipher()
+cipher = dynamic_cipher()
 
 parent = tkinter.Tk() # Create the object
 parent.overrideredirect(1) # Avoid it appearing and then disappearing quickly
