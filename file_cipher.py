@@ -2,7 +2,8 @@
 
 import tkinter
 from tkinter import filedialog, messagebox
-from dynamic_cipher import Cipher
+from dynamic_cipher import Cipher as dynamic_cipher
+from static_cipher import Cipher as static_cipher
 
 def get_filename(filepath, yesno):
     """return filename determining if file was coded or decoded"""
@@ -10,7 +11,7 @@ def get_filename(filepath, yesno):
     end = "-coded" if yesno else "-decoded"
     return filepath.split(".")[0] + end + ext
 
-cipher = Cipher()
+cipher = dynamic_cipher()
 
 parent = tkinter.Tk() # Create the object
 parent.overrideredirect(1) # Avoid it appearing and then disappearing quickly
