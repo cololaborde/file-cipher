@@ -3,7 +3,7 @@
 import tkinter
 from tkinter import filedialog, messagebox
 import os
-from cipher import Cipher
+from static_cipher import Cipher
 
 cipher = Cipher()
 

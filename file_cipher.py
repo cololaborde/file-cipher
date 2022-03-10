@@ -2,7 +2,7 @@
 
 import tkinter
 from tkinter import filedialog, messagebox
-from cipher import Cipher
+from static_cipher import Cipher
 
 def get_filename(filepath, yesno):
     """return filename determining if file was coded or decoded"""
