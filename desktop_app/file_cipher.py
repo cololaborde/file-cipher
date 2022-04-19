@@ -2,9 +2,9 @@
 
 import tkinter
 from tkinter import filedialog, messagebox
+from threading import Thread
 from dynamic_cipher import Cipher as dynamic_cipher
 from static_cipher import Cipher as static_cipher
-from threading import Thread
 
 def get_filename(filepath, yesno):
     """return filename determining if file was coded or decoded"""
@@ -12,13 +12,15 @@ def get_filename(filepath, yesno):
     end = "-coded" if yesno else "-decoded"
     return filepath.split(".")[0] + end + ext
 
-def read_and_code(cipher, filename):
-    file_read = file.read()
-    cipher.code_binary(readed_file=file_read, level=1, filepath=filename)
+def read_and_code(cipher_instance, binary, path):
+    """ read binary and call cipher instance code function """
+    file_read = binary.read()
+    cipher_instance.code_binary(readed_file=file_read, level=1, filepath=path)
 
-def read_and_decode(cipher, filename):
-    file_read = file.read()
-    cipher.decode_binary(readed_file=file_read, level=1, filepath=filename)
+def read_and_decode(cipher_instance, binary, path):
+    """ read binary and call cipher instance decode function """
+    file_read = binary.read()
+    cipher_instance.decode_binary(readed_file=file_read, level=1, filepath=path)
 
 
 parent = tkinter.Tk() # Create the object
