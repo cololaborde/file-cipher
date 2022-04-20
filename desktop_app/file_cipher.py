@@ -45,9 +45,9 @@ if __name__ == "__main__":
             filename = get_filename(each, YESNO)
             if YESNO:
                 with open(each, 'rb') as file:
-                    thread = Thread(target = read_and_code, args = (cipher, filename, ))
+                    thread = Thread(target = read_and_code, args = (cipher, file, filename, ))
                     thread.start()
             else:
                 with open(each, 'r', encoding='utf8') as file:
-                    thread = Thread(target = read_and_decode, args = (cipher, filename, ))
+                    thread = Thread(target = read_and_decode, args = (cipher, file, filename, ))
                     thread.start()
