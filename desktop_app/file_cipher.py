@@ -1,6 +1,7 @@
 """ files encoder/decoder """
 
 import tkinter
+import mmap
 from tkinter import filedialog, messagebox
 from threading import Thread
 from dynamic_cipher import Cipher as dynamic_cipher
@@ -17,9 +18,9 @@ def read_and_code(cipher_instance, binary, path):
     file_read = binary.read()
     cipher_instance.code_binary(readed_file=file_read, level=1, filepath=path)
 
-def read_and_decode(cipher_instance, binary, path):
+def read_and_decode(cipher_instance, plain, path):
     """ read binary and call cipher instance decode function """
-    file_read = binary.read()
+    file_read = plain.read()
     cipher_instance.decode_binary(readed_file=file_read, level=1, filepath=path)
 
 
