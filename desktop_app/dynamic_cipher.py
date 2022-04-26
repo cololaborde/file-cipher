@@ -42,7 +42,7 @@ class Cipher():
         return to_code, to_decode
 
 
-    def co_decode(self, script, level, code):
+    def co_decode(self, script, code):
         """ encode or decode file character by character acording to "code" variable value """
         # determining hashmap to use
         mod_dict = self.get_mod_dict()
@@ -61,42 +61,41 @@ class Cipher():
         content = ""
         pb_title = 'Coding' if code else 'Decoding'
         script = script.split('.')[0]
-        for _ in range(int(level)):
-            for line in tqdm(script, desc=pb_title):
-                for character in line:
-                    try:
-                        if code:
-                            content = content + base[character]
-                        else:
-                            content = content + yxpb[character]
-                    except KeyError:
-                        content = content + character
-                line = content
+        for line in tqdm(script, desc=pb_title):
+            for character in line:
+                try:
+                    if code:
+                        content = content + base[character]
+                    else:
+                        content = content + yxpb[character]
+                except KeyError:
+                    content = content + character
+            line = content
         return content
 
 
-    def code_binary(self, readed_file, level, filepath):
+    def code_binary(self, readed_file, filepath):
         """ encode binary file getting base64 encoding """
         with open(filepath.split('.')[0] + '.txt','wb') as out:
             b64_encode = base64.b64encode(readed_file)
-            coded = self.co_decode(b64_encode.decode(), level=level, code=True)
+            coded = self.co_decode(b64_encode.decode(), code=True)
             out.write(coded.encode())
             # write hash key
             out.write(('.' + self.get_current_hash()).encode())
             extension = filepath.split(".")[len(filepath.split("."))-1]
-            coded_extension = self.co_decode(extension, level=level, code=True)
+            coded_extension = self.co_decode(extension, code=True)
             # write coded extension
             out.write(("."+coded_extension).encode())
             out.close()
         self.set_current_hash("")
 
 
-    def decode_binary(self, readed_file, level, filepath):
+    def decode_binary(self, readed_file, filepath):
         """ decode binary file reading base64 enconding from txt file """
         # getting extension decoded after to set current_hash
-        decoded = self.co_decode(readed_file, level=level, code=False)
+        decoded = self.co_decode(readed_file, code=False)
         output_extension = readed_file.split(".")[len(readed_file.split("."))-1]
-        decoded_output_ext = self.co_decode(output_extension, level=level, code=False)
+        decoded_output_ext = self.co_decode(output_extension, code=False)
         output_filename = filepath.split(".")[0] + '.' + decoded_output_ext
         with open(output_filename, 'wb') as out:
             out.write(base64.b64decode(decoded.encode()))

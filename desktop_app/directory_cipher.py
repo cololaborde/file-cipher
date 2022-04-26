@@ -23,9 +23,9 @@ if os.path.isdir(directory):
             if YESNO:
                 with open(filename, 'rb') as file:
                     file_read = file.read()
-                    cipher.code_binary(readed_file=file_read, level=1, filepath=filename)
+                    cipher.code_binary(readed_file=file_read, filepath=filename)
             else:
                 with open(filename, 'r', encoding='utf8') as file:
                     file_read = file.read()
-                    cipher.decode_binary(readed_file=file_read, level=1, filepath=filename)
+                    cipher.decode_binary(readed_file=file_read, filepath=filename)
             os.remove(filename)

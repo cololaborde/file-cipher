@@ -8,19 +8,22 @@ from static_cipher import Cipher as static_cipher
 
 def get_filename(filepath, yesno):
     """return filename determining if file was coded or decoded"""
-    ext = "."+filepath.split(".")[len(filepath.split("."))-1]
     end = "-coded" if yesno else "-decoded"
-    return filepath.split(".")[0] + end + ext
+    base_path = '/'.join(filepath.split('/')[:len(filepath.split('/'))-1])
+    filename = filepath.split('/')[len(filepath.split('/')) -1]
+    output_filename = base_path + '/' + '.'.join(filename.split('.')[:len(filename.split('.'))-1])
+    extension = filename.split(".")[len(filename.split("."))-1]
+    return output_filename + end, extension
 
-def read_and_code(cipher_instance, binary, path):
+def read_and_code(cipher_instance, binary, path, extension):
     """ read binary and call cipher instance code function """
     file_read = binary.read()
-    cipher_instance.code_binary(readed_file=file_read, level=1, filepath=path)
+    cipher_instance.code_binary(readed_file=file_read, filepath=path, extension=extension)
 
 def read_and_decode(cipher_instance, plain, path):
     """ read binary and call cipher instance decode function """
     file_read = plain.read()
-    cipher_instance.decode_binary(readed_file=file_read, level=1, filepath=path)
+    cipher_instance.decode_binary(readed_file=file_read, filepath=path)
 
 
 parent = tkinter.Tk() # Create the object
@@ -42,10 +45,10 @@ if __name__ == "__main__":
         DYNAMIC = messagebox.askyesno(None, "Dynamic (YES) or Static (NO)?", icon ='question')
         cipher = dynamic_cipher() if DYNAMIC else static_cipher()
         for each in file_names:
-            filename = get_filename(each, YESNO)
+            filename, ext = get_filename(each, YESNO)
             if YESNO:
                 with open(each, 'rb') as file:
-                    thread = Thread(target = read_and_code, args = (cipher, file, filename, ))
+                    thread = Thread(target = read_and_code, args = (cipher, file, filename, ext, ))
                     thread.start()
             else:
                 with open(each, 'r', encoding='utf8') as file:
