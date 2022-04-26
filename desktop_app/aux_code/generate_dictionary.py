@@ -10,31 +10,32 @@ chars = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h',
      'N', 'Ñ', 'O', 'P', 'Q', 'R', 'S', 'T',
      'U', 'V', 'W', 'X', 'Y', 'Z', '¿', '?',
      '=', '+', '-', '/', '>', '<', ',','[',
-     ']', ' ', '_', '!', '¡', ':', ';', '1',
-     '2', '3', '4', '5', '6', '7', '8', '9']
+     ']', ' ', '_', '!', '¡', ':', ';', '%',
+     '1', '2', '3', '4', '5', '6', '7', '8', '9']
 
 def create():
     """ generate and return codification/decodification dictionary """
     to_code = {}
     to_decode = {}
+    used_keys = []
+    used_values = []
 
-    keys = chars.copy()
-    values = chars.copy()
+    for _ in range(len(chars)):
+        char_key = chars[random.randint(0, len(chars)-1)]
+        while char_key in used_keys:
+            char_key = chars[random.randint(0, len(chars)-1)]
+        used_keys.append(char_key)
+        char_value = chars[random.randint(0, len(chars)-1)]
+        if len(used_keys) == len(chars):
+            while char_value in used_values:
+                char_value = chars[random.randint(0, len(chars)-1)]
+        else:
+            while char_key == char_value or char_value in used_values:
+                char_value = chars[random.randint(0, len(chars)-1)]
+        used_values.append(char_value)
 
-    while True:
-        index = random.randint(0, len(keys)-1)
-        key = keys[index]
-        while True:
-            index_value = random.randint(0, len(values)-1)
-            value = values[index_value]
-            if value != key:
-                keys.pop(index)
-                values.pop(index_value)
-                to_code[key] = value
-                to_decode[value] = key
-                break
-        if len(keys) == 0:
-            break
+        to_code[char_key] = char_value
+        to_decode[char_value] = char_key
 
     #because the indentation is important to keep in a base64 file
     to_code['']=''
@@ -47,13 +48,13 @@ def generate_hash():
     aux_dict = chars.copy()
     passwd = ""
     for _ in range(10):
-        passwd = passwd + aux_dict[random.randint(0, (len(aux_dict) - 1))]
+        passwd = passwd + aux_dict[random.randint(0, len(aux_dict) - 1)]
     return passwd
 
 
 dict_of_dicts = {}
 
-for _ in range(100):
+for i in range(100):
     aux = {}
     base, yxpb = create()
     aux['base'] = base
