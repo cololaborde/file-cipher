@@ -10,9 +10,9 @@ def get_filename(filepath, yesno):
     """return filename determining if file was coded or decoded"""
     end = "-coded" if yesno else "-decoded"
     base_path = '/'.join(filepath.split('/')[:len(filepath.split('/'))-1])
-    filename = filepath.split('/')[len(filepath.split('/')) -1]
-    output_filename = base_path + '/' + '.'.join(filename.split('.')[:len(filename.split('.'))-1])
-    extension = filename.split(".")[len(filename.split("."))-1]
+    file_name = filepath.split('/')[len(filepath.split('/')) -1]
+    output_filename = base_path + '/' + '.'.join(file_name.split('.')[:len(file_name.split('.'))-1])
+    extension = file_name.split(".")[len(file_name.split("."))-1]
     return output_filename + end, extension
 
 
