@@ -1,7 +1,6 @@
 """ files encoder/decoder """
 
 import tkinter
-import mmap
 from tkinter import filedialog, messagebox
 from threading import Thread
 from dynamic_cipher import Cipher as dynamic_cipher
