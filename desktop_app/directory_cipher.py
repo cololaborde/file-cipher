@@ -6,8 +6,6 @@ import os
 from static_cipher import Cipher as static_cipher
 from dynamic_cipher import Cipher as dynamic_cipher
 
-cipher = dynamic_cipher()
-
 parent = tkinter.Tk() # Create the object
 parent.overrideredirect(1) # Avoid it appearing and then disappearing quickly
 parent.withdraw() # Hide the window as we do not want to see this one
@@ -17,6 +15,8 @@ directory = filedialog.askdirectory(title='Select directory', parent=parent)
 
 if os.path.isdir(directory):
     YESNO = messagebox.askyesno(None, "Code (YES) or Decode (NO)?", icon ='question')
+    DYNAMIC = messagebox.askyesno(None, "Dynamic (YES) or Static (NO)?", icon ='question')
+    cipher = dynamic_cipher() if DYNAMIC else static_cipher()
     for root, subdirectories, files in os.walk(directory):
         for file in files:
             filename = os.path.join(root, file)
