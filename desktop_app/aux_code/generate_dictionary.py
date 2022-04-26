@@ -26,6 +26,8 @@ def create():
             char_key = chars[random.randint(0, len(chars)-1)]
         used_keys.append(char_key)
         char_value = chars[random.randint(0, len(chars)-1)]
+        
+        #para el ultimo caso
         if len(used_keys) == len(chars):
             while char_value in used_values:
                 char_value = chars[random.randint(0, len(chars)-1)]
