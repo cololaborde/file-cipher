@@ -26,22 +26,18 @@ def generate_hash():
 
 def create():
     """ generate and return codification/decodification dictionary """
-    to_code = {}
-    to_decode = {}
-    used_keys = []
-    used_values = []
 
     def get_random_char():
         return chars[random.randint(0, len(chars)-1)]
 
-    def get_char_key():
+    def get_char_key(used_keys):
         #get non duplicated char for keys
         char_key = get_random_char()
         while char_key in used_keys:
             char_key = get_random_char()
         return char_key
 
-    def get_char_value():
+    def get_char_value(used_values, used_keys, char_key):
         #get non duplicated char for values
         char_value = get_random_char()
         #for lastone entry
@@ -53,12 +49,16 @@ def create():
                 char_value = chars[random.randint(0, len(chars)-1)]
         return char_value
 
+    to_code = {}
+    to_decode = {}
+    used_keys = []
+    used_values = []
 
     for _ in range(len(chars)):
-        char_key = get_char_key()
+        char_key = get_char_key(used_keys)
         used_keys.append(char_key)
 
-        char_value = get_char_value()
+        char_value = get_char_value(used_values, used_keys, char_key)
         used_values.append(char_value)
 
         to_code[char_key] = char_value
