@@ -27,24 +27,18 @@ class Cipher():
             line = content
         return content
 
-    def code_binary(self, readed_file, filepath, extension):
+
+    def code_binary(self, readed_file, extension):
         """ encode binary file getting base64 encoding """
-        output_filename = filepath + '.txt'
+        b64_encode = base64.b64encode(readed_file)
+        coded = self.co_decode(b64_encode.decode(), code=True)
+        coded_extension = self.co_decode(extension, code=True)
+        return coded, coded_extension
 
-        with open(output_filename, 'wb') as out:
-            b64_encode = base64.b64encode(readed_file)
-            coded = self.co_decode(b64_encode.decode(), code=True)
-            coded_extension = self.co_decode(extension, code=True)
-            out.write(coded.encode())
-            out.write(("."+coded_extension).encode())
-            out.close()
 
-    def decode_binary(self, readed_file, filepath):
+    def decode_binary(self, readed_file):
         """ decode binary file reading base64 enconding from txt file """
         decoded = self.co_decode(readed_file, code=False)
         output_extension = readed_file.split(".")[len(readed_file.split('.'))-1]
         decoded_output_ext = self.co_decode(output_extension, code=False)
-        output_filename = filepath + '.' + decoded_output_ext
-        with open(output_filename, 'wb') as out:
-            out.write(base64.b64decode(decoded.encode()))
-            out.close()
+        return base64.b64decode(decoded.encode()), decoded_output_ext

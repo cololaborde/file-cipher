@@ -15,15 +15,26 @@ def get_filename(filepath, yesno):
     extension = filename.split(".")[len(filename.split("."))-1]
     return output_filename + end, extension
 
+
 def read_and_code(cipher_instance, binary, path, extension):
     """ read binary and call cipher instance code function """
     file_read = binary.read()
-    cipher_instance.code_binary(readed_file=file_read, filepath=path, extension=extension)
+    coded_file, coded_extension = cipher_instance.code_binary(readed_file=file_read, extension=extension)
+    output_filename = path + '.txt'
+    with open(output_filename, 'wb') as out:
+        out.write(coded_file.encode())
+        out.write(("."+coded_extension).encode())
+        out.close()
+
 
 def read_and_decode(cipher_instance, plain, path):
     """ read binary and call cipher instance decode function """
     file_read = plain.read()
-    cipher_instance.decode_binary(readed_file=file_read, filepath=path)
+    decoded_file, decoded_extension = cipher_instance.decode_binary(readed_file=file_read)
+    output_filename = path + '.' + decoded_extension
+    with open(output_filename, 'wb') as out:
+        out.write(decoded_file)
+        out.close()
 
 
 parent = tkinter.Tk() # Create the object
