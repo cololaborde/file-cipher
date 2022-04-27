@@ -37,20 +37,22 @@ def read_and_decode(cipher_instance, plain, path):
         out.close()
 
 
-parent = tkinter.Tk() # Create the object
-parent.overrideredirect(1) # Avoid it appearing and then disappearing quickly
-parent.withdraw() # Hide the window as we do not want to see this one
+def run_file_dialog():
+    parent = tkinter.Tk() # Create the object
+    parent.overrideredirect(1) # Avoid it appearing and then disappearing quickly
+    parent.withdraw() # Hide the window as we do not want to see this one
 
-file_types = [('All files', '*')]
+    file_types = [('All files', '*')]
 
-# Ask the user to select a one or more file names.
-file_names = filedialog.askopenfilenames(title='Select one or more files',
+    # Ask the user to select a one or more file names.
+    return filedialog.askopenfilenames(title='Select one or more files',
                                         filetypes=file_types, parent=parent)
 
 
 ########  Main  ########
 
 if __name__ == "__main__":
+    file_names = run_file_dialog()
     if len(file_names) > 0:
         YESNO = messagebox.askyesno(None, "Code (YES) or Decode (NO)?", icon ='question')
         DYNAMIC = messagebox.askyesno(None, "Dynamic (YES) or Static (NO)?", icon ='question')
