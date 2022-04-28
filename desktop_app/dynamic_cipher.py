@@ -42,8 +42,9 @@ class Cipher():
         return to_code, to_decode
 
 
-    def get_key(self, code, script, mod_dict):
+    def get_key(self, code, script):
         """ determine and return the key used to decode and what will used to code """
+        mod_dict = self.read_mod()
         if not code and len(script.split('.')) > 1:
             self.set_current_hash(script.split('.')[1])
         if (code and self.get_current_hash() != '') or (not code):
@@ -56,10 +57,7 @@ class Cipher():
 
     def co_decode(self, script, code):
         """ encode or decode file character by character acording to "code" variable value """
-        # determining hashmap to use
-        mod_dict = self.read_mod()
-        base, yxpb = self.get_key(code, script, mod_dict)
-
+        base, yxpb = self.get_key(code, script)
         # starting ciph
         content = ""
         pb_title = 'Coding' if code else 'Decoding'
