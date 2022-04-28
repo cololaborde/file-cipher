@@ -33,7 +33,7 @@ class Cipher():
         b64_encode = base64.b64encode(readed_file)
         coded = self.co_decode(b64_encode.decode(), code=True)
         coded_extension = self.co_decode(extension, code=True)
-        return coded, coded_extension
+        return [coded.encode(), ("."+coded_extension).encode()]
 
 
     def decode_binary(self, readed_file):

@@ -19,11 +19,13 @@ def get_filename(filepath, yesno):
 def read_and_code(cipher_instance, binary, path, extension):
     """ read binary and call cipher instance code function """
     file_read = binary.read()
-    coded_file, coded_extension = cipher_instance.code_binary(readed_file=file_read, extension=extension)
+    writables_list = cipher_instance.code_binary(readed_file=file_read, extension=extension)
     output_filename = path + '.txt'
     with open(output_filename, 'wb') as out:
-        out.write(coded_file.encode())
-        out.write(("."+coded_extension).encode())
+        for w in writables_list:
+            out.write(w)
+        #out.write(coded_file.encode())
+        #out.write(("."+coded_extension).encode())
         out.close()
 
 
