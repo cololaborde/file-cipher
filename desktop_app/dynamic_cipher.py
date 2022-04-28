@@ -58,8 +58,8 @@ class Cipher():
         """ encode or decode file character by character acording to "code" variable value """
         # determining hashmap to use
         mod_dict = self.read_mod()
-
         base, yxpb = self.get_key(code, script, mod_dict)
+
         # starting ciph
         content = ""
         pb_title = 'Coding' if code else 'Decoding'
