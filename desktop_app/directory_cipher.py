@@ -8,6 +8,7 @@ from dynamic_cipher import Cipher as dynamic_cipher
 
 
 def run_file_dialog():
+    """ create tkinter dialog to select directory """
     parent = tkinter.Tk() # Create the object
     parent.overrideredirect(1) # Avoid it appearing and then disappearing quickly
     parent.withdraw() # Hide the window as we do not want to see this one
@@ -29,9 +30,9 @@ if __name__ == "__main__":
                 if YESNO:
                     with open(filename, 'rb') as file:
                         file_read = file.read()
-                        cipher.code_binary(readed_file=file_read, filepath=filename)
+                        cipher.code_binary(readed_file=file_read)
                 else:
                     with open(filename, 'r', encoding='utf8') as file:
                         file_read = file.read()
-                        cipher.decode_binary(readed_file=file_read, filepath=filename)
+                        cipher.decode_binary(readed_file=file_read)
                 os.remove(filename)

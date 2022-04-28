@@ -40,9 +40,10 @@ class Cipher():
         to_code = to_co_decode_dict['base']
         to_decode = to_co_decode_dict['yxpb']
         return to_code, to_decode
-        
+
 
     def get_key(self, code, script, mod_dict):
+        """ determine and return the key used to decode and what will used to code """
         if not code and len(script.split('.')) > 1:
             self.set_current_hash(script.split('.')[1])
         if (code and self.get_current_hash() != '') or (not code):

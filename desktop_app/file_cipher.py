@@ -22,10 +22,8 @@ def read_and_code(cipher_instance, binary, path, extension):
     writables_list = cipher_instance.code_binary(readed_file=file_read, extension=extension)
     output_filename = path + '.txt'
     with open(output_filename, 'wb') as out:
-        for w in writables_list:
-            out.write(w)
-        #out.write(coded_file.encode())
-        #out.write(("."+coded_extension).encode())
+        for to_write in writables_list:
+            out.write(to_write)
         out.close()
 
 
@@ -40,6 +38,7 @@ def read_and_decode(cipher_instance, plain, path):
 
 
 def run_file_dialog():
+    """ create tkinter dialog to select files """
     parent = tkinter.Tk() # Create the object
     parent.overrideredirect(1) # Avoid it appearing and then disappearing quickly
     parent.withdraw() # Hide the window as we do not want to see this one
