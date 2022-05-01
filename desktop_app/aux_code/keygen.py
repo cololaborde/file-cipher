@@ -1,6 +1,8 @@
 """ dictionary generator """
 
 import random
+import sys
+from sys import argv
 
 
 chars = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h',
@@ -76,13 +78,24 @@ def create():
 if __name__ == "__main__":
 
     dict_of_dicts = {}
+    used_hash_keys = []
 
-    for i in range(100):
+    try:
+        if len(argv) < 2 or not isinstance(int(argv[1]), int):
+            print('Missing arguments: keys quantity')
+            sys.exit()
+    except:
+        print('Argument must been number')
+        sys.exit()
+    for i in range(int(argv[1])):
         aux = {}
         base, yxpb = create()
         aux['base'] = base
         aux['yxpb'] = yxpb
-        dict_of_dicts[generate_hash()] = aux
-
+        key = generate_hash()
+        while key in used_hash_keys:
+            key = generate_hash()
+        used_hash_keys.append(key)
+        dict_of_dicts[key] = aux
     with open('mod.txt', 'w', encoding='utf-8') as out:
         out.write(str(dict_of_dicts))
