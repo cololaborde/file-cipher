@@ -80,12 +80,8 @@ if __name__ == "__main__":
     dict_of_dicts = {}
     used_hash_keys = []
 
-    try:
-        if len(argv) < 2 or not isinstance(int(argv[1]), int):
-            print('Missing arguments: keys quantity')
-            sys.exit()
-    except:
-        print('Argument must been number')
+    if len(argv) < 2 or not argv[1].isnumeric():
+        print('Missing arguments: keys quantity')
         sys.exit()
     for i in range(int(argv[1])):
         aux = {}
