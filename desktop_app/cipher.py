@@ -111,7 +111,6 @@ class StaticCipher(Cipher):
         return b64decode(decoded.encode()), decoded_output_ext
 
 
-
 class DynamicCipher(Cipher):
     """ dynamic coder/decoder """
 
