@@ -3,8 +3,7 @@
 import tkinter
 from tkinter import filedialog, messagebox
 from threading import Thread
-from dynamic_cipher import Cipher as dynamic_cipher
-from static_cipher import Cipher as static_cipher
+from merged_cipher import StaticCipher, DynamicCipher
 
 def get_filename(filepath, yesno):
     """return filename determining if file was coded or decoded"""
@@ -57,14 +56,16 @@ if __name__ == "__main__":
     if len(file_names) > 0:
         YESNO = messagebox.askyesno(None, "Code (YES) or Decode (NO)?", icon ='question')
         DYNAMIC = messagebox.askyesno(None, "Dynamic (YES) or Static (NO)?", icon ='question')
-        cipher = dynamic_cipher() if DYNAMIC else static_cipher()
+        cipher = DynamicCipher() if DYNAMIC else StaticCipher()
         for each in file_names:
             filename, ext = get_filename(each, YESNO)
             if YESNO:
                 with open(each, 'rb') as file:
+                    #read_and_code(cipher, file, filename, ext)
                     thread = Thread(target = read_and_code, args = (cipher, file, filename, ext, ))
                     thread.start()
             else:
                 with open(each, 'r', encoding='utf8') as file:
+                    #read_and_decode(cipher, file, filename)
                     thread = Thread(target = read_and_decode, args = (cipher, file, filename, ))
                     thread.start()
