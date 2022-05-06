@@ -5,7 +5,9 @@ from threading import Thread
 from cipher import StaticCipher, DynamicCipher
 
 def get_filename(filepath, yesno):
+    
     """return filename determining if file was coded or decoded"""
+
     end = "-coded" if yesno else "-decoded"
     base_path = '/'.join(filepath.split('/')[:len(filepath.split('/'))-1])
     file_name = filepath.split('/')[len(filepath.split('/')) -1]
@@ -15,7 +17,9 @@ def get_filename(filepath, yesno):
 
 
 def read_and_code(cipher_instance, binary, path, extension):
+
     """ read binary and call cipher instance code function """
+
     file_read = binary.read()
     writables_list = cipher_instance.code_binary(readed_file=file_read, extension=extension)
     output_filename = path + '.txt'
@@ -26,7 +30,9 @@ def read_and_code(cipher_instance, binary, path, extension):
 
 
 def read_and_decode(cipher_instance, plain, path):
+
     """ read binary and call cipher instance decode function """
+
     file_read = plain.read()
     decoded_file, decoded_extension = cipher_instance.decode_binary(readed_file=file_read)
     output_filename = path + '.' + decoded_extension
@@ -36,7 +42,9 @@ def read_and_decode(cipher_instance, plain, path):
 
 
 def run_file_dialog():
+
     """ create tkinter dialog to select files """
+
     parent = Tk() # Create the object
     parent.overrideredirect(1) # Avoid it appearing and then disappearing quickly
     parent.withdraw() # Hide the window as we do not want to see this one

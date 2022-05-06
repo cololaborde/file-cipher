@@ -6,6 +6,7 @@ from random import randint
 from tqdm import tqdm
 
 class Cipher():
+    
     """ binary encoder/decoder """
 
     base, yxpb = {}, {}
@@ -52,7 +53,7 @@ class Cipher():
 
 
 class StaticCipher(Cipher):
-
+    
     """ static coder/decoder """
 
     def __init__(self):
@@ -112,6 +113,7 @@ class StaticCipher(Cipher):
 
 
 class DynamicCipher(Cipher):
+
     """ dynamic coder/decoder """
 
     current_hash = ""

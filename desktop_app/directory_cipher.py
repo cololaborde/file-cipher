@@ -6,7 +6,9 @@ from cipher import StaticCipher, DynamicCipher
 
 
 def get_filename(file_path):
+
     """return filename and extension """
+
     base_path = '/'.join(file_path.split('/')[:len(file_path.split('/'))-1])
     file_name = file_path.split('/')[len(file_path.split('/')) -1]
     output_filename = base_path + '/' + '.'.join(file_name.split('.')[:len(file_name.split('.'))-1])
@@ -15,7 +17,9 @@ def get_filename(file_path):
 
 
 def read_and_code(binary, cipher_instance, file_name, extension):
+
     """ read binary and call cipher instance code function """
+
     file_read = binary.read()
     writables_list = cipher_instance.code_binary(readed_file=file_read, extension=extension)
     output_filename = file_name + '.txt'
@@ -26,7 +30,9 @@ def read_and_code(binary, cipher_instance, file_name, extension):
 
 
 def read_and_decode(plain, cipher_instance, file_path):
+
     """ read binary and call cipher instance decode function """
+
     file_read = plain.read()
     decoded_file, decoded_extension = cipher_instance.decode_binary(readed_file=file_read)
     output_filename = file_path + '.' + decoded_extension
@@ -36,7 +42,9 @@ def read_and_decode(plain, cipher_instance, file_path):
 
 
 def run_file_dialog():
+
     """ create tkinter dialog to select directory """
+    
     parent = Tk() # Create the object
     parent.overrideredirect(1) # Avoid it appearing and then disappearing quickly
     parent.withdraw() # Hide the window as we do not want to see this one

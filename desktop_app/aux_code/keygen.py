@@ -18,7 +18,9 @@ chars = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h',
 
 
 def generate_hash():
+
     """ create random hash """
+
     aux_dict = chars.copy()
     passwd = ""
     for _ in range(10):
@@ -27,6 +29,7 @@ def generate_hash():
 
 
 def create():
+    
     """ generate and return codification/decodification dictionary """
 
     def get_random_char():
