@@ -1,10 +1,8 @@
 """ files in a directory encoder/decoder, removing the originals """
 
-import tkinter
-from tkinter import filedialog, messagebox
+from tkinter import filedialog, messagebox, Tk
 import os
-from static_cipher import Cipher as static_cipher
-from dynamic_cipher import Cipher as dynamic_cipher
+from cipher import StaticCipher, DynamicCipher
 
 
 def get_filename(file_path):
@@ -39,7 +37,7 @@ def read_and_decode(plain, cipher_instance, file_path):
 
 def run_file_dialog():
     """ create tkinter dialog to select directory """
-    parent = tkinter.Tk() # Create the object
+    parent = Tk() # Create the object
     parent.overrideredirect(1) # Avoid it appearing and then disappearing quickly
     parent.withdraw() # Hide the window as we do not want to see this one
     return filedialog.askdirectory(title='Select directory', parent=parent)
@@ -52,7 +50,7 @@ if __name__ == "__main__":
     if os.path.isdir(directory):
         YESNO = messagebox.askyesno(None, "Code (YES) or Decode (NO)?", icon ='question')
         DYNAMIC = messagebox.askyesno(None, "Dynamic (YES) or Static (NO)?", icon ='question')
-        cipher = dynamic_cipher() if DYNAMIC else static_cipher()
+        cipher = DynamicCipher() if DYNAMIC else StaticCipher()
         for root, subdirectories, files in os.walk(directory):
             for file in files:
                 filepath = os.path.join(root, file)

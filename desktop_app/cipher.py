@@ -1,9 +1,9 @@
 """ encoder/decoder class """
 
 from ast import literal_eval
-from tqdm import tqdm
 from base64 import b64encode, b64decode
 from random import randint
+from tqdm import tqdm
 
 class Cipher():
     """ binary encoder/decoder """
@@ -12,19 +12,23 @@ class Cipher():
 
     @classmethod
     def get_base(cls):
+        """ get current base dictionary """
         return cls.base
 
     @classmethod
     def set_base(cls, new_base):
+        """ set current base dictionary """
         cls.base = new_base
 
     @classmethod
-    def set_yxpb(cls, new_yxpb):
-        cls.yxpb = new_yxpb
-    
-    @classmethod
     def get_yxpb(cls):
+        """ get current yxpb dictionary """
         return cls.yxpb
+
+    @classmethod
+    def set_yxpb(cls, new_yxpb):
+        """ get current yxpb dictionary """
+        cls.yxpb = new_yxpb
 
 
     def co_decode(self, script, code):
@@ -32,15 +36,15 @@ class Cipher():
         content = ""
         pb_title = 'Coding' if code else 'Decoding'
         script = script.split('.')[0]
-        b = self.get_base()
-        y = self.get_yxpb()
+        _b = self.get_base()
+        _y = self.get_yxpb()
         for line in tqdm(script, desc=pb_title):
             for character in line:
                 try:
                     if code:
-                        content = content + b[character]
+                        content = content + _b[character]
                     else:
-                        content = content + y[character]
+                        content = content + _y[character]
                 except KeyError:
                     content = content + character
             line = content
@@ -49,8 +53,10 @@ class Cipher():
 
 class StaticCipher(Cipher):
 
-    def __init__(self):
+    """ static coder/decoder """
 
+    def __init__(self):
+        """ init method set base and yxpb dicts """
         base = {'I': 'B', 'E': 'Ñ', 'Q': 'm', '=': 'G',
         'j': 'Z', 'V': '5', 't': 'I', '5': 'u', 'f': 'b',
         ',': 'H', '1': 'o', 'W': 'z', 'p': '9', 'e': 'c',
@@ -88,7 +94,7 @@ class StaticCipher(Cipher):
         self.set_base(base)
         self.set_yxpb(yxpb)
 
-    
+
     def code_binary(self, readed_file, extension):
         """ encode binary file getting base64 encoding """
         b64_encode = b64encode(readed_file)
@@ -107,6 +113,7 @@ class StaticCipher(Cipher):
 
 
 class DynamicCipher(Cipher):
+    """ dynamic coder/decoder """
 
     current_hash = ""
 
@@ -152,6 +159,7 @@ class DynamicCipher(Cipher):
         else:
             base, yxpb = self.read_key_from_file(mod_dict)
         return base, yxpb
+
 
     def code_binary(self, readed_file, extension):
         """ encode binary file getting base64 encoding """
