@@ -1,9 +1,9 @@
 """ encoder/decoder class """
 
-import base64
-import random
-import ast
+from ast import literal_eval
 from tqdm import tqdm
+from base64 import b64encode, b64decode
+from random import randint
 
 class Cipher():
     """ binary encoder/decoder """
@@ -91,7 +91,7 @@ class StaticCipher(Cipher):
     
     def code_binary(self, readed_file, extension):
         """ encode binary file getting base64 encoding """
-        b64_encode = base64.b64encode(readed_file)
+        b64_encode = b64encode(readed_file)
         coded = self.co_decode(b64_encode.decode(), code=True)
         coded_extension = self.co_decode(extension, code=True)
         return [coded.encode(), ("."+coded_extension).encode()]
@@ -102,7 +102,7 @@ class StaticCipher(Cipher):
         decoded = self.co_decode(readed_file, code=False)
         output_extension = readed_file.split(".")[len(readed_file.split('.'))-1]
         decoded_output_ext = self.co_decode(output_extension, code=False)
-        return base64.b64decode(decoded.encode()), decoded_output_ext
+        return b64decode(decoded.encode()), decoded_output_ext
 
 
 
@@ -126,14 +126,14 @@ class DynamicCipher(Cipher):
         """ return readed and converted to hashmap mod file """
         with open('mod.txt', 'r', encoding='utf-8') as mod:
             mod_read = mod.read()
-            mod_dict = ast.literal_eval(mod_read)
+            mod_dict = literal_eval(mod_read)
             return mod_dict
 
 
     def read_key_from_file(self, mod):
         """ return selected random hashmaps to code/decode """
         hash_list = list(mod)
-        new_hash = hash_list[random.randint(0, len(hash_list)-1)]
+        new_hash = hash_list[randint(0, len(hash_list)-1)]
         self.set_current_hash(new_hash)
         to_co_decode_dict = mod[self.get_current_hash()]
         to_code = to_co_decode_dict['base']
@@ -155,7 +155,7 @@ class DynamicCipher(Cipher):
 
     def code_binary(self, readed_file, extension):
         """ encode binary file getting base64 encoding """
-        b64_encode = base64.b64encode(readed_file)
+        b64_encode = b64encode(readed_file)
         base, yxpb = self.get_key(True, b64_encode.decode())
         self.set_base(base)
         self.set_yxpb(yxpb)
@@ -175,4 +175,4 @@ class DynamicCipher(Cipher):
         output_extension = readed_file.split(".")[len(readed_file.split("."))-1]
         decoded_output_ext = self.co_decode(output_extension, code=False)
         self.set_current_hash("")
-        return base64.b64decode(decoded.encode()), decoded_output_ext
+        return b64decode(decoded.encode()), decoded_output_ext

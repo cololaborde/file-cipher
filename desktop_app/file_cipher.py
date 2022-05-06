@@ -1,9 +1,8 @@
 """ files encoder/decoder """
 
-import tkinter
-from tkinter import filedialog, messagebox
+from tkinter import filedialog, messagebox, Tk
 from threading import Thread
-from merged_cipher import StaticCipher, DynamicCipher
+from cipher import StaticCipher, DynamicCipher
 
 def get_filename(filepath, yesno):
     """return filename determining if file was coded or decoded"""
@@ -38,7 +37,7 @@ def read_and_decode(cipher_instance, plain, path):
 
 def run_file_dialog():
     """ create tkinter dialog to select files """
-    parent = tkinter.Tk() # Create the object
+    parent = Tk() # Create the object
     parent.overrideredirect(1) # Avoid it appearing and then disappearing quickly
     parent.withdraw() # Hide the window as we do not want to see this one
 
