@@ -6,19 +6,18 @@ from sys import argv
 
 
 chars = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h',
-     'i', 'j', 'k', 'l', 'm', 'n', 'ñ', 'o',
-     'p', 'q', 'r', 's', 't', 'u', 'v', 'w',
-     'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E',
-     'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
-     'N', 'Ñ', 'O', 'P', 'Q', 'R', 'S', 'T',
-     'U', 'V', 'W', 'X', 'Y', 'Z', '¿', '?',
-     '=', '+', '-', '/', '>', '<', ',','[',
-     ']', ' ', '_', '!', '¡', ':', ';', '%',
-     '1', '2', '3', '4', '5', '6', '7', '8', '9']
+         'i', 'j', 'k', 'l', 'm', 'n', 'ñ', 'o',
+         'p', 'q', 'r', 's', 't', 'u', 'v', 'w',
+         'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E',
+         'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
+         'N', 'Ñ', 'O', 'P', 'Q', 'R', 'S', 'T',
+         'U', 'V', 'W', 'X', 'Y', 'Z', '¿', '?',
+         '=', '+', '-', '/', '>', '<', ',', '[',
+         ']', ' ', '_', '!', '¡', ':', ';', '%',
+         '1', '2', '3', '4', '5', '6', '7', '8', '9']
 
 
 def generate_hash():
-
     """ create random hash """
 
     aux_dict = chars.copy()
@@ -29,23 +28,22 @@ def generate_hash():
 
 
 def create():
-    
     """ generate and return codification/decodification dictionary """
 
     def get_random_char():
         return chars[random.randint(0, len(chars)-1)]
 
     def get_char_key(used_keys):
-        #get non duplicated char for keys
+        # get non duplicated char for keys
         char_key = get_random_char()
         while char_key in used_keys:
             char_key = get_random_char()
         return char_key
 
     def get_char_value(used_values, used_keys, char_key):
-        #get non duplicated char for values
+        # get non duplicated char for values
         char_value = get_random_char()
-        #for lastone entry
+        # for lastone entry
         if len(used_keys) == len(chars):
             while char_value in used_values:
                 char_value = chars[random.randint(0, len(chars)-1)]
@@ -69,9 +67,9 @@ def create():
         to_code[char_key] = char_value
         to_decode[char_value] = char_key
 
-    #because the indentation is important to keep in a base64 file
-    to_code['']=''
-    to_decode['']=''
+    # because the indentation is important to keep in a base64 file
+    to_code[''] = ''
+    to_decode[''] = ''
 
     return to_code, to_decode
 
