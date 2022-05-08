@@ -79,7 +79,7 @@ if __name__ == "__main__":
             filename, ext = get_filename(each, YESNO)
             if YESNO:
                 with open(each, 'rb') as file:
-                    # temporary fix to threading problem
+                    # temporary fix to threading problem in dynamic mode
                     if len(file_names) > 1 and DYNAMIC:
                         read_and_code(cipher, file, filename, ext, key_path)
                     else:
@@ -88,7 +88,7 @@ if __name__ == "__main__":
                         thread.start()
             else:
                 with open(each, 'r', encoding='utf8') as file:
-                    # temporary fix to threading problem
+                    # temporary fix to threading problem in dynamic mode
                     if len(file_names) > 1 and DYNAMIC:
                         read_and_decode(cipher, file, filename, key_path)
                     else:
