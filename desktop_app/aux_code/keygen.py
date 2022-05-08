@@ -1,8 +1,7 @@
 """ dictionary generator """
 
 import random
-import sys
-from sys import argv
+from sys import argv, exit as sys_exit
 
 
 chars = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h',
@@ -27,14 +26,14 @@ def get_state():
         if len(argv) == 3:
             if not argv[2].isnumeric():
                 print('Wrong parameter => number_of_keys')
-                sys.exit()
+                sys_exit()
         else:
             print('Missing argument => number_of_keys')
-            sys.exit()
+            sys_exit()
         keys_count = argv[2]
     elif argv[1] != '-s':
         print('Invalid option')
-        sys.exit()
+        sys_exit()
     return dynamic, keys_count
 
 
@@ -130,7 +129,7 @@ if __name__ == "__main__":
     if len(argv) < 2 or len(argv) > 3:
         print(
             'Use mode: python keygen.py [-d | -s] [number_of_keys](only when 1st param is "-d")')
-        sys.exit()
+        sys_exit()
 
     is_dynamic, keys_number = get_state()
     if is_dynamic:

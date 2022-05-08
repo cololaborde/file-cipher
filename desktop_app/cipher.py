@@ -1,5 +1,6 @@
 """ encoder/decoder class """
 
+from abc import abstractmethod
 from ast import literal_eval
 from base64 import b64encode, b64decode
 from random import randint
@@ -39,6 +40,14 @@ class Cipher():
             mod_read = mod.read()
             mod_dict = literal_eval(mod_read)
             return mod_dict
+
+    @abstractmethod
+    def code_binary(self, readed_file, extension, key_path):
+        """ code binary """
+
+    @abstractmethod
+    def decode_binary(self, readed_file, key_path):
+        """ decode binary """
 
     def co_decode(self, script, code):
         """ encode or decode file character by character acording to "code" variable value """
