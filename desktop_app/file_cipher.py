@@ -57,16 +57,23 @@ def run_file_dialog(file_types, multiple):
                                    filetypes=file_types, parent=parent)
 
 
+def create_upload_boxes():
+    """ create upload dialog boxes """
+
+    co_decode = messagebox.askyesno(
+        None, "Code (YES) or Decode (NO)?", icon='question')
+    dyn = messagebox.askyesno(
+        None, "Dynamic (YES) or Static (NO)?", icon='question')
+    keypath = run_file_dialog([('text files', '.txt')], False)
+    return dyn, keypath, co_decode
+
 ########  Main  ########
+
 
 if __name__ == "__main__":
     file_names = run_file_dialog([('All files', '*')], True)
     if len(file_names) > 0:
-        YESNO = messagebox.askyesno(
-            None, "Code (YES) or Decode (NO)?", icon='question')
-        DYNAMIC = messagebox.askyesno(
-            None, "Dynamic (YES) or Static (NO)?", icon='question')
-        key_path = run_file_dialog([('text files', '.txt')], False)
+        DYNAMIC, key_path, YESNO = create_upload_boxes()
         cipher = DynamicCipher() if DYNAMIC else StaticCipher(key_path)
         for each in file_names:
             filename, ext = get_filename(each, YESNO)
