@@ -17,6 +17,27 @@ chars = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h',
          '1', '2', '3', '4', '5', '6', '7', '8', '9']
 
 
+def get_state():
+    """ return state from params """
+
+    dynamic = False
+    keys_count = 0
+    if argv[1] == '-d':
+        dynamic = True
+        if len(argv) == 3:
+            if not argv[2].isnumeric():
+                print('Wrong parameter => number_of_keys')
+                sys.exit()
+        else:
+            print('Missing argument => number_of_keys')
+            sys.exit()
+        keys_count = argv[2]
+    elif argv[1] != '-s':
+        print('Invalid option')
+        sys.exit()
+    return dynamic, keys_count
+
+
 def generate_hash():
     """ create random hash """
 
@@ -74,17 +95,12 @@ def create():
     return to_code, to_decode
 
 
-########  Main  ########
-
-if __name__ == "__main__":
+def generate_dynamic_keys(keys_count):
+    """ generate key from dynamic option """
 
     dict_of_dicts = {}
     used_hash_keys = []
-
-    if len(argv) < 2 or not argv[1].isnumeric():
-        print('Missing arguments: keys quantity')
-        sys.exit()
-    for i in range(int(argv[1])):
+    for _ in range(int(keys_count)):
         aux = {}
         base, yxpb = create()
         aux['base'] = base
@@ -94,5 +110,34 @@ if __name__ == "__main__":
             key = generate_hash()
         used_hash_keys.append(key)
         dict_of_dicts[key] = aux
-    with open('mod.txt', 'w', encoding='utf-8') as out:
-        out.write(str(dict_of_dicts))
+    return dict_of_dicts
+
+
+def generate_static_key():
+    """ generate key from static option """
+
+    dict_key = {}
+    base, yxpb = create()
+    dict_key['base'] = base
+    dict_key['yxpb'] = yxpb
+    return dict_key
+
+
+########  Main  ########
+
+if __name__ == "__main__":
+
+    if len(argv) < 2 or len(argv) > 3:
+        print(
+            'Use mode: python keygen.py [-d | -s] [number_of_keys](only when 1st param is "-d")')
+        sys.exit()
+
+    is_dynamic, keys_number = get_state()
+    if is_dynamic:
+        FILENAME = "mod.txt"
+        output_mod = generate_dynamic_keys(keys_number)
+    else:
+        FILENAME = "mod_static.txt"
+        output_mod = generate_static_key()
+    with open(FILENAME, 'w', encoding='utf-8') as out:
+        out.write(str(output_mod))
