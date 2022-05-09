@@ -6,6 +6,19 @@ from sys import argv, exit as sys_exit
 from tkinter import filedialog, messagebox, Tk
 from cipher import StaticCipher, DynamicCipher
 
+
+def get_params():
+    """ get params """
+    is_dir, recursive, remove_after = False, False, False
+    if '-d' in argv:
+        is_dir = True
+    if '-r' in argv:
+        recursive = True
+    if '--remove-originals' in argv:
+        remove_after = True
+    return is_dir, recursive, remove_after
+
+
 def get_filename(filepath, yesno):
     """return filename determining if file was coded or decoded"""
 
@@ -51,7 +64,7 @@ def read_and_decode(instance, plain, path, keypath):
     return True
 
 
-def run_file_dialog(file_types=[('All files', '*')], multiple=False, open_dir=False):
+def run_file_dialog(file_types=('All files', '*'), multiple=False, open_dir=False):
     """ create tkinter dialog to select files """
 
     parent = Tk()  # Create the object
@@ -63,9 +76,9 @@ def run_file_dialog(file_types=[('All files', '*')], multiple=False, open_dir=Fa
         return filedialog.askdirectory(title='Select directory', parent=parent)
     return filedialog \
         .askopenfilenames(title='Select one or more files',
-                          filetypes=file_types, parent=parent) if multiple else \
+                          filetypes=[file_types], parent=parent) if multiple else \
         filedialog.askopenfilename(title='Select key file',
-                                   filetypes=file_types, parent=parent)
+                                   filetypes=[file_types], parent=parent)
 
 
 def create_dialog_boxes():
@@ -75,22 +88,24 @@ def create_dialog_boxes():
         None, "Code (YES) or Decode (NO)?", icon='question')
     dyn = messagebox.askyesno(
         None, "Dynamic (YES) or Static (NO)?", icon='question')
-    keypath = run_file_dialog([('text files', '.txt')], False)
+    keypath = run_file_dialog(('text files', '.txt'), False)
     return dyn, keypath, co_decode
 
 
-def process_file(file_names, yes_no, dyn, cipher, pathkey, delete):
+def process_file(file_names, yes_no, cipher, pathkey, delete):
     """ process files to code or encode """
     for each in file_names:
         if isfile(each):
             filename, ext = get_filename(each, yes_no)
             if yes_no:
                 with open(each, 'rb') as file:
-                    was_processed = read_and_code(cipher, file, filename, ext, pathkey)
+                    was_processed = read_and_code(
+                        cipher, file, filename, ext, pathkey)
             else:
-                #como hacer para validar que un txt sea un codeado?
+                # como hacer para validar que un txt sea un codeado?
                 with open(each, 'r', encoding='utf8') as file:
-                    was_processed = read_and_decode(cipher, file, filename, pathkey)
+                    was_processed = read_and_decode(
+                        cipher, file, filename, pathkey)
             if delete and was_processed:
                 remove(each)
 
@@ -98,14 +113,7 @@ def process_file(file_names, yes_no, dyn, cipher, pathkey, delete):
 ########  Main  ########
 if __name__ == "__main__":
 
-    DIR, RECURSIVE, REMOVE = False, False, False
-
-    if '-d' in argv:
-        DIR = True
-    if '-r' in argv:
-        RECURSIVE = True
-    if '--remove-originals' in argv:
-        REMOVE = True
+    DIR, RECURSIVE, REMOVE = get_params()
 
     if DIR:
         locate = run_file_dialog(
@@ -118,12 +126,12 @@ if __name__ == "__main__":
             for root, subdirectories, files in walk(locate):
                 files = [join(root, file) for file in files]
                 process_file(file_names=files, yes_no=YESNO,
-                             dyn=DYNAMIC, cipher=cipher_instance, pathkey=key_path, delete=REMOVE)
+                             cipher=cipher_instance, pathkey=key_path, delete=REMOVE)
         else:
             files = listdir(locate)
             files = [join(locate, file) for file in files]
             process_file(file_names=files, yes_no=YESNO,
-                         dyn=DYNAMIC, cipher=cipher_instance, pathkey=key_path, delete=REMOVE)
+                         cipher=cipher_instance, pathkey=key_path, delete=REMOVE)
     else:
         locate = run_file_dialog(multiple=True)
         if len(locate) == 0:
@@ -131,4 +139,4 @@ if __name__ == "__main__":
         DYNAMIC, key_path, YESNO = create_dialog_boxes()
         cipher_instance = DynamicCipher() if DYNAMIC else StaticCipher(key_path)
         process_file(file_names=locate, yes_no=YESNO,
-                     dyn=DYNAMIC, cipher=cipher_instance, pathkey=key_path, delete=REMOVE)
+                     cipher=cipher_instance, pathkey=key_path, delete=REMOVE)
