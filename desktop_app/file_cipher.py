@@ -1,5 +1,8 @@
 """ files encoder/decoder """
 
+from os.path import isfile, join
+from os import remove, listdir, walk
+from sys import argv
 from tkinter import filedialog, messagebox, Tk
 from threading import Thread
 from cipher import StaticCipher, DynamicCipher
@@ -17,11 +20,11 @@ def get_filename(filepath, yesno):
     return output_filename + end, extension
 
 
-def read_and_code(cipher_instance, binary, path, extension, keypath):
+def read_and_code(instance, binary, path, extension, keypath):
     """ read binary and call cipher instance code function """
 
     file_read = binary.read()
-    writables_list = cipher_instance.code_binary(readed_file=file_read,
+    writables_list = instance.code_binary(readed_file=file_read,
                                                  extension=extension, key_path=keypath)
     output_filename = path + '.txt'
     with open(output_filename, 'wb') as out:
@@ -30,11 +33,11 @@ def read_and_code(cipher_instance, binary, path, extension, keypath):
         out.close()
 
 
-def read_and_decode(cipher_instance, plain, path, keypath):
+def read_and_decode(instance, plain, path, keypath):
     """ read binary and call cipher instance decode function """
 
     file_read = plain.read()
-    decoded_file, decoded_extension = cipher_instance\
+    decoded_file, decoded_extension = instance\
         .decode_binary(readed_file=file_read, key_path=keypath)
     output_filename = path + '.' + decoded_extension
     with open(output_filename, 'wb') as out:
@@ -42,7 +45,7 @@ def read_and_decode(cipher_instance, plain, path, keypath):
         out.close()
 
 
-def run_file_dialog(file_types, multiple):
+def run_file_dialog(file_types=[('All files', '*')], multiple=False, open_dir=False):
     """ create tkinter dialog to select files """
 
     parent = Tk()  # Create the object
@@ -50,6 +53,8 @@ def run_file_dialog(file_types, multiple):
     parent.overrideredirect(1)
     parent.withdraw()  # Hide the window as we do not want to see this one
 
+    if open_dir:
+        return filedialog.askdirectory(title='Select directory', parent=parent)
     return filedialog \
         .askopenfilenames(title='Select one or more files',
                           filetypes=file_types, parent=parent) if multiple else \
@@ -57,7 +62,7 @@ def run_file_dialog(file_types, multiple):
                                    filetypes=file_types, parent=parent)
 
 
-def create_upload_boxes():
+def create_dialog_boxes():
     """ create upload dialog boxes """
 
     co_decode = messagebox.askyesno(
@@ -67,31 +72,64 @@ def create_upload_boxes():
     keypath = run_file_dialog([('text files', '.txt')], False)
     return dyn, keypath, co_decode
 
-########  Main  ########
 
-
-if __name__ == "__main__":
-    file_names = run_file_dialog([('All files', '*')], True)
-    if len(file_names) > 0:
-        DYNAMIC, key_path, YESNO = create_upload_boxes()
-        cipher = DynamicCipher() if DYNAMIC else StaticCipher(key_path)
-        for each in file_names:
-            filename, ext = get_filename(each, YESNO)
-            if YESNO:
+def process_file(file_names, yes_no, dyn, cipher, pathkey, delete):
+    """ process files to code or encode """
+    for each in file_names:
+        if isfile(each):
+            filename, ext = get_filename(each, yes_no)
+            if yes_no:
                 with open(each, 'rb') as file:
                     # temporary fix to threading problem in dynamic mode
-                    if len(file_names) > 1 and DYNAMIC:
-                        read_and_code(cipher, file, filename, ext, key_path)
+                    if len(file_names) > 1 and dyn:
+                        read_and_code(cipher, file, filename, ext, pathkey)
                     else:
                         thread = Thread(target=read_and_code, args=(
-                            cipher, file, filename, ext, key_path, ))
+                            cipher, file, filename, ext, pathkey, ))
                         thread.start()
             else:
                 with open(each, 'r', encoding='utf8') as file:
                     # temporary fix to threading problem in dynamic mode
-                    if len(file_names) > 1 and DYNAMIC:
-                        read_and_decode(cipher, file, filename, key_path)
+                    if len(file_names) > 1 and dyn:
+                        read_and_decode(cipher, file, filename, pathkey)
                     else:
                         thread = Thread(target=read_and_decode, args=(
-                            cipher, file, filename, key_path, ))
+                            cipher, file, filename, pathkey, ))
                         thread.start()
+            if delete:
+                remove(each)
+
+
+########  Main  ########
+if __name__ == "__main__":
+
+    DIR, RECURSIVE, REMOVE = False, False, False
+
+    if '-d' in argv:
+        DIR = True
+    if '-r' in argv:
+        RECURSIVE = True
+    if '--remove-originals' in argv:
+        REMOVE = True
+
+    if DIR:
+        locate = run_file_dialog(
+            file_types=None, multiple=False, open_dir=True)
+        DYNAMIC, key_path, YESNO = create_dialog_boxes()
+        cipher_instance = DynamicCipher() if DYNAMIC else StaticCipher(key_path)
+        if RECURSIVE:
+            for root, subdirectories, files in walk(locate):
+                files = [join(root, file) for file in files]
+                process_file(file_names=files, yes_no=YESNO,
+                             dyn=DYNAMIC, cipher=cipher_instance, pathkey=key_path, delete=REMOVE)
+        else:
+            files = listdir(locate)
+            files = [join(locate, file) for file in files]
+            process_file(file_names=files, yes_no=YESNO,
+                         dyn=DYNAMIC, cipher=cipher_instance, pathkey=key_path, delete=REMOVE)
+    else:
+        locate = run_file_dialog(multiple=True)
+        DYNAMIC, key_path, YESNO = create_dialog_boxes()
+        cipher_instance = DynamicCipher() if DYNAMIC else StaticCipher(key_path)
+        process_file(file_names=locate, yes_no=YESNO,
+                     dyn=DYNAMIC, cipher=cipher_instance, pathkey=key_path, delete=REMOVE)
