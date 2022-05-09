@@ -2,7 +2,7 @@
 
 from os.path import isfile, join
 from os import remove, listdir, walk
-from sys import argv
+from sys import argv, exit as sys_exit
 from tkinter import filedialog, messagebox, Tk
 from threading import Thread
 from cipher import StaticCipher, DynamicCipher
@@ -25,7 +25,7 @@ def read_and_code(instance, binary, path, extension, keypath):
 
     file_read = binary.read()
     writables_list = instance.code_binary(readed_file=file_read,
-                                                 extension=extension, key_path=keypath)
+                                          extension=extension, key_path=keypath)
     output_filename = path + '.txt'
     with open(output_filename, 'wb') as out:
         for to_write in writables_list:
@@ -73,6 +73,11 @@ def create_dialog_boxes():
     return dyn, keypath, co_decode
 
 
+def check_status(location, is_dyn, path, yesno):
+    """ check not empty values for params """
+    return len(location) > 0 and is_dyn is not None and len(path) > 0 and yesno is not None
+
+
 def process_file(file_names, yes_no, dyn, cipher, pathkey, delete):
     """ process files to code or encode """
     for each in file_names:
@@ -116,6 +121,8 @@ if __name__ == "__main__":
         locate = run_file_dialog(
             file_types=None, multiple=False, open_dir=True)
         DYNAMIC, key_path, YESNO = create_dialog_boxes()
+        if not check_status(locate, DYNAMIC, key_path, YESNO):
+            sys_exit()
         cipher_instance = DynamicCipher() if DYNAMIC else StaticCipher(key_path)
         if RECURSIVE:
             for root, subdirectories, files in walk(locate):
@@ -130,6 +137,8 @@ if __name__ == "__main__":
     else:
         locate = run_file_dialog(multiple=True)
         DYNAMIC, key_path, YESNO = create_dialog_boxes()
+        if not check_status(locate, DYNAMIC, key_path, YESNO):
+            sys_exit()
         cipher_instance = DynamicCipher() if DYNAMIC else StaticCipher(key_path)
         process_file(file_names=locate, yes_no=YESNO,
                      dyn=DYNAMIC, cipher=cipher_instance, pathkey=key_path, delete=REMOVE)
