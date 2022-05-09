@@ -24,6 +24,8 @@ def read_and_code(instance, binary, path, extension, keypath):
     file_read = binary.read()
     writables_list = instance.code_binary(readed_file=file_read,
                                           extension=extension, key_path=keypath)
+    if not writables_list:
+        return False
     output_filename = path + '.txt'
     with open(output_filename, 'wb') as out:
         for to_write in writables_list:
@@ -40,6 +42,8 @@ def read_and_decode(instance, plain, path, keypath):
         return False
     decoded_file, decoded_extension = instance\
         .decode_binary(readed_file=file_read, key_path=keypath)
+    if not decoded_file or not decoded_extension:
+        return False
     output_filename = path + '.' + decoded_extension
     with open(output_filename, 'wb') as out:
         out.write(decoded_file)

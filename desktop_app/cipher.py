@@ -56,6 +56,8 @@ class Cipher():
         script = script.split('.')[0]
         _b = self.get_base()
         _y = self.get_yxpb()
+        if not _b or not _y:
+            return None
         for line in tqdm(script, desc=pb_title):
             for character in line:
                 try:
@@ -82,13 +84,19 @@ class StaticCipher(Cipher):
     def get_key(self, keypath):
         """ return mod to use """
         mod_dict = self.read_mod(keypath)
-        return mod_dict['base'], mod_dict['yxpb']
+        try:
+            return mod_dict['base'], mod_dict['yxpb']
+        except KeyError:
+            print('incorrect key file')
+            return None, None
 
     def code_binary(self, readed_file, extension, key_path):
         """ encode binary file getting base64 encoding """
         b64_encode = b64encode(readed_file)
         coded = self.co_decode(b64_encode.decode(), code=True)
         coded_extension = self.co_decode(extension, code=True)
+        if not coded or not coded_extension:
+            return []
         return [coded.encode(), ("."+coded_extension).encode()]
 
     def decode_binary(self, readed_file, key_path):
@@ -97,6 +105,8 @@ class StaticCipher(Cipher):
         output_extension = readed_file.split(
             ".")[len(readed_file.split('.'))-1]
         decoded_output_ext = self.co_decode(output_extension, code=False)
+        if not decoded or not decoded_output_ext:
+            return None, None
         return b64decode(decoded.encode()), decoded_output_ext
 
 
@@ -121,9 +131,13 @@ class DynamicCipher(Cipher):
         hash_list = list(mod)
         new_hash = hash_list[randint(0, len(hash_list)-1)]
         self.set_current_hash(new_hash)
-        to_co_decode_dict = mod[self.get_current_hash()]
-        to_code = to_co_decode_dict['base']
-        to_decode = to_co_decode_dict['yxpb']
+        try:
+            to_co_decode_dict = mod[self.get_current_hash()]
+            to_code = to_co_decode_dict['base']
+            to_decode = to_co_decode_dict['yxpb']
+        except KeyError:
+            print('incorrect key file')
+            return None, None
         return to_code, to_decode
 
     def get_key(self, code, script, keypath):
@@ -132,8 +146,12 @@ class DynamicCipher(Cipher):
         if not code and len(script.split('.')) > 1:
             self.set_current_hash(script.split('.')[1])
         if (code and self.get_current_hash() != '') or (not code):
-            base = mod_dict[self.get_current_hash()]['base']
-            yxpb = mod_dict[self.get_current_hash()]['yxpb']
+            try:
+                base = mod_dict[self.get_current_hash()]['base']
+                yxpb = mod_dict[self.get_current_hash()]['yxpb']
+            except KeyError:
+                print('incorrect key file')
+                return None, None
         else:
             base, yxpb = self.read_key_from_file(mod_dict)
         return base, yxpb
@@ -142,6 +160,8 @@ class DynamicCipher(Cipher):
         """ encode binary file getting base64 encoding """
         b64_encode = b64encode(readed_file)
         base, yxpb = self.get_key(True, b64_encode.decode(), key_path)
+        if not base or not yxpb:
+            return []
         self.set_base(base)
         self.set_yxpb(yxpb)
         coded = self.co_decode(b64_encode.decode(), code=True)
@@ -153,11 +173,15 @@ class DynamicCipher(Cipher):
     def decode_binary(self, readed_file, key_path):
         """ decode binary file reading base64 enconding from txt file """
         base, yxpb = self.get_key(False, readed_file, key_path)
+        if not base or not yxpb:
+            return None, None
         self.set_base(base)
         self.set_yxpb(yxpb)
         decoded = self.co_decode(readed_file, code=False)
         output_extension = readed_file.split(
             ".")[len(readed_file.split("."))-1]
         decoded_output_ext = self.co_decode(output_extension, code=False)
+        if not decoded or not decoded_output_ext:
+            return None, None
         self.set_current_hash("")
         return b64decode(decoded.encode()), decoded_output_ext
