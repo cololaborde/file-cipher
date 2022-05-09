@@ -4,9 +4,7 @@ from os.path import isfile, join
 from os import remove, listdir, walk
 from sys import argv, exit as sys_exit
 from tkinter import filedialog, messagebox, Tk
-from threading import Thread
 from cipher import StaticCipher, DynamicCipher
-
 
 def get_filename(filepath, yesno):
     """return filename determining if file was coded or decoded"""
@@ -31,18 +29,22 @@ def read_and_code(instance, binary, path, extension, keypath):
         for to_write in writables_list:
             out.write(to_write)
         out.close()
+    return True
 
 
 def read_and_decode(instance, plain, path, keypath):
     """ read binary and call cipher instance decode function """
-
-    file_read = plain.read()
+    try:
+        file_read = plain.read()
+    except UnicodeDecodeError:
+        return False
     decoded_file, decoded_extension = instance\
         .decode_binary(readed_file=file_read, key_path=keypath)
     output_filename = path + '.' + decoded_extension
     with open(output_filename, 'wb') as out:
         out.write(decoded_file)
         out.close()
+    return True
 
 
 def run_file_dialog(file_types=[('All files', '*')], multiple=False, open_dir=False):
@@ -85,23 +87,12 @@ def process_file(file_names, yes_no, dyn, cipher, pathkey, delete):
             filename, ext = get_filename(each, yes_no)
             if yes_no:
                 with open(each, 'rb') as file:
-                    # temporary fix to threading problem in dynamic mode
-                    if len(file_names) > 1 and dyn:
-                        read_and_code(cipher, file, filename, ext, pathkey)
-                    else:
-                        thread = Thread(target=read_and_code, args=(
-                            cipher, file, filename, ext, pathkey, ))
-                        thread.start()
+                    was_processed = read_and_code(cipher, file, filename, ext, pathkey)
             else:
+                #como hacer para validar que un txt sea un codeado?
                 with open(each, 'r', encoding='utf8') as file:
-                    # temporary fix to threading problem in dynamic mode
-                    if len(file_names) > 1 and dyn:
-                        read_and_decode(cipher, file, filename, pathkey)
-                    else:
-                        thread = Thread(target=read_and_decode, args=(
-                            cipher, file, filename, pathkey, ))
-                        thread.start()
-            if delete:
+                    was_processed = read_and_decode(cipher, file, filename, pathkey)
+            if delete and was_processed:
                 remove(each)
 
 
