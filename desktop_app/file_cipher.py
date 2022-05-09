@@ -79,11 +79,6 @@ def create_dialog_boxes():
     return dyn, keypath, co_decode
 
 
-def check_status(location, is_dyn, path, yesno):
-    """ check not empty values for params """
-    return len(location) > 0 and is_dyn is not None and len(path) > 0 and yesno is not None
-
-
 def process_file(file_names, yes_no, dyn, cipher, pathkey, delete):
     """ process files to code or encode """
     for each in file_names:
@@ -115,9 +110,9 @@ if __name__ == "__main__":
     if DIR:
         locate = run_file_dialog(
             file_types=None, multiple=False, open_dir=True)
-        DYNAMIC, key_path, YESNO = create_dialog_boxes()
-        if not check_status(locate, DYNAMIC, key_path, YESNO):
+        if len(locate) == 0:
             sys_exit()
+        DYNAMIC, key_path, YESNO = create_dialog_boxes()
         cipher_instance = DynamicCipher() if DYNAMIC else StaticCipher(key_path)
         if RECURSIVE:
             for root, subdirectories, files in walk(locate):
@@ -131,9 +126,9 @@ if __name__ == "__main__":
                          dyn=DYNAMIC, cipher=cipher_instance, pathkey=key_path, delete=REMOVE)
     else:
         locate = run_file_dialog(multiple=True)
-        DYNAMIC, key_path, YESNO = create_dialog_boxes()
-        if not check_status(locate, DYNAMIC, key_path, YESNO):
+        if len(locate) == 0:
             sys_exit()
+        DYNAMIC, key_path, YESNO = create_dialog_boxes()
         cipher_instance = DynamicCipher() if DYNAMIC else StaticCipher(key_path)
         process_file(file_names=locate, yes_no=YESNO,
                      dyn=DYNAMIC, cipher=cipher_instance, pathkey=key_path, delete=REMOVE)
