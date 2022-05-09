@@ -1,5 +1,7 @@
 """ files encoder/decoder """
 
+import os
+from sys import argv
 from tkinter import filedialog, messagebox, Tk
 from threading import Thread
 from cipher import StaticCipher, DynamicCipher
@@ -42,7 +44,7 @@ def read_and_decode(cipher_instance, plain, path, keypath):
         out.close()
 
 
-def run_file_dialog(file_types, multiple):
+def run_file_dialog(file_types=[('All files', '*')], multiple=False, directory=False):
     """ create tkinter dialog to select files """
 
     parent = Tk()  # Create the object
@@ -50,6 +52,8 @@ def run_file_dialog(file_types, multiple):
     parent.overrideredirect(1)
     parent.withdraw()  # Hide the window as we do not want to see this one
 
+    if directory:
+        return filedialog.askdirectory(title='Select directory', parent=parent)
     return filedialog \
         .askopenfilenames(title='Select one or more files',
                           filetypes=file_types, parent=parent) if multiple else \
@@ -57,7 +61,7 @@ def run_file_dialog(file_types, multiple):
                                    filetypes=file_types, parent=parent)
 
 
-def create_upload_boxes():
+def create_dialog_boxes():
     """ create upload dialog boxes """
 
     co_decode = messagebox.askyesno(
@@ -67,15 +71,10 @@ def create_upload_boxes():
     keypath = run_file_dialog([('text files', '.txt')], False)
     return dyn, keypath, co_decode
 
-########  Main  ########
 
-
-if __name__ == "__main__":
-    file_names = run_file_dialog([('All files', '*')], True)
-    if len(file_names) > 0:
-        DYNAMIC, key_path, YESNO = create_upload_boxes()
-        cipher = DynamicCipher() if DYNAMIC else StaticCipher(key_path)
-        for each in file_names:
+def process_file(file_names, YESNO, DYNAMIC, cipher, key_path, remove):
+    for each in file_names:
+        if os.path.isfile(each):
             filename, ext = get_filename(each, YESNO)
             if YESNO:
                 with open(each, 'rb') as file:
@@ -95,3 +94,40 @@ if __name__ == "__main__":
                         thread = Thread(target=read_and_decode, args=(
                             cipher, file, filename, key_path, ))
                         thread.start()
+            if remove:
+                os.remove(each)
+
+
+########  Main  ########
+if __name__ == "__main__":
+
+    directory, recursive, remove = False, False, False
+
+    if '-d' in argv:
+        directory = True
+    if '-r' in argv:
+        recursive = True
+    if '--remove-originals' in argv:
+        remove = True
+
+    if directory:
+        locate = run_file_dialog(
+            file_types=None, multiple=False, directory=True)
+        DYNAMIC, key_path, YESNO = create_dialog_boxes()
+        cipher = DynamicCipher() if DYNAMIC else StaticCipher(key_path)
+        if recursive:
+            for root, subdirectories, files in os.walk(locate):
+                files = [os.path.join(root, file) for file in files]
+                process_file(file_names=files, YESNO=YESNO,
+                             DYNAMIC=DYNAMIC, cipher=cipher, key_path=key_path, remove=remove)
+        else:
+            files = os.listdir(locate)
+            files = [os.path.join(locate, file) for file in files]
+            process_file(file_names=files, YESNO=YESNO,
+                         DYNAMIC=DYNAMIC, cipher=cipher, key_path=key_path, remove=remove)
+    else:
+        locate = run_file_dialog(multiple=True)
+        DYNAMIC, key_path, YESNO = create_dialog_boxes()
+        cipher = DynamicCipher() if DYNAMIC else StaticCipher(key_path)
+        process_file(file_names=locate, YESNO=YESNO,
+                     DYNAMIC=DYNAMIC, cipher=cipher, key_path=key_path, remove=remove)
