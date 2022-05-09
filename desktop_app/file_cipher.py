@@ -1,6 +1,7 @@
 """ files encoder/decoder """
 
-import os
+from os.path import isfile, join
+from os import remove, listdir, walk
 from sys import argv
 from tkinter import filedialog, messagebox, Tk
 from threading import Thread
@@ -74,7 +75,7 @@ def create_dialog_boxes():
 
 def process_file(file_names, YESNO, DYNAMIC, cipher, key_path, remove):
     for each in file_names:
-        if os.path.isfile(each):
+        if isfile(each):
             filename, ext = get_filename(each, YESNO)
             if YESNO:
                 with open(each, 'rb') as file:
@@ -95,7 +96,7 @@ def process_file(file_names, YESNO, DYNAMIC, cipher, key_path, remove):
                             cipher, file, filename, key_path, ))
                         thread.start()
             if remove:
-                os.remove(each)
+                remove(each)
 
 
 ########  Main  ########
@@ -116,13 +117,13 @@ if __name__ == "__main__":
         DYNAMIC, key_path, YESNO = create_dialog_boxes()
         cipher = DynamicCipher() if DYNAMIC else StaticCipher(key_path)
         if recursive:
-            for root, subdirectories, files in os.walk(locate):
-                files = [os.path.join(root, file) for file in files]
+            for root, subdirectories, files in walk(locate):
+                files = [join(root, file) for file in files]
                 process_file(file_names=files, YESNO=YESNO,
                              DYNAMIC=DYNAMIC, cipher=cipher, key_path=key_path, remove=remove)
         else:
-            files = os.listdir(locate)
-            files = [os.path.join(locate, file) for file in files]
+            files = listdir(locate)
+            files = [join(locate, file) for file in files]
             process_file(file_names=files, YESNO=YESNO,
                          DYNAMIC=DYNAMIC, cipher=cipher, key_path=key_path, remove=remove)
     else:
