@@ -134,7 +134,7 @@ if __name__ == "__main__":
 
     is_dynamic, keys_number = get_state()
     if is_dynamic:
-        FILENAME = "mod.txt"
+        FILENAME = "mod_dyn.txt"
         output_mod = generate_dynamic_keys(keys_number)
     else:
         FILENAME = "mod_static.txt"
