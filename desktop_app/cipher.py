@@ -49,6 +49,7 @@ class Cipher():
     def decode_binary(self, readed_file, key_path):
         """ decode binary """
 
+
     def co_decode(self, script, code):
         """ encode or decode file character by character acording to "code" variable value """
         content = ""
@@ -77,12 +78,15 @@ class StaticCipher(Cipher):
 
     def __init__(self, keypath):
         """ init method set base and yxpb dicts """
+
         base, yxpb = self.get_key(keypath)
         self.set_base(base)
         self.set_yxpb(yxpb)
 
+
     def get_key(self, keypath):
         """ return mod to use """
+
         mod_dict = self.read_mod(keypath)
         try:
             return mod_dict['base'], mod_dict['yxpb']
@@ -90,8 +94,10 @@ class StaticCipher(Cipher):
             print('incorrect key file')
             return None, None
 
+
     def code_binary(self, readed_file, extension, key_path):
         """ encode binary file getting base64 encoding """
+
         b64_encode = b64encode(readed_file)
         coded = self.co_decode(b64_encode.decode(), code=True)
         coded_extension = self.co_decode(extension, code=True)
@@ -99,8 +105,10 @@ class StaticCipher(Cipher):
             return []
         return [coded.encode(), ("."+coded_extension).encode()]
 
+
     def decode_binary(self, readed_file, key_path):
         """ decode binary file reading base64 enconding from txt file """
+
         decoded = self.co_decode(readed_file, code=False)
         output_extension = readed_file.split(
             ".")[len(readed_file.split('.'))-1]
@@ -119,15 +127,19 @@ class DynamicCipher(Cipher):
     @classmethod
     def get_current_hash(cls):
         """ get current hash """
+
         return cls.current_hash
 
     @classmethod
     def set_current_hash(cls, new_hash):
         """ set current hash """
+
         cls.current_hash = new_hash
+
 
     def read_key_from_file(self, mod):
         """ return selected random hashmaps to code/decode """
+
         hash_list = list(mod)
         new_hash = hash_list[randint(0, len(hash_list)-1)]
         self.set_current_hash(new_hash)
@@ -140,8 +152,10 @@ class DynamicCipher(Cipher):
             return None, None
         return to_code, to_decode
 
+
     def get_key(self, code, script, keypath):
         """ determine and return the key used to decode and what will used to code """
+
         mod_dict = self.read_mod(keypath)
         if not code and len(script.split('.')) > 1:
             self.set_current_hash(script.split('.')[1])
@@ -156,8 +170,10 @@ class DynamicCipher(Cipher):
             base, yxpb = self.read_key_from_file(mod_dict)
         return base, yxpb
 
+
     def code_binary(self, readed_file, extension, key_path):
         """ encode binary file getting base64 encoding """
+
         b64_encode = b64encode(readed_file)
         base, yxpb = self.get_key(True, b64_encode.decode(), key_path)
         if not base or not yxpb:
@@ -170,8 +186,10 @@ class DynamicCipher(Cipher):
         self.set_current_hash("")
         return [coded.encode(), ('.' + rand_key).encode(), ('.' + coded_extension).encode()]
 
+
     def decode_binary(self, readed_file, key_path):
         """ decode binary file reading base64 enconding from txt file """
+
         base, yxpb = self.get_key(False, readed_file, key_path)
         if not base or not yxpb:
             return None, None

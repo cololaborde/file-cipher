@@ -49,6 +49,7 @@ def read_and_code(instance, binary, path, extension, keypath):
 
 def read_and_decode(instance, plain, path, keypath):
     """ read binary and call cipher instance decode function """
+
     try:
         file_read = plain.read()
     except UnicodeDecodeError:
@@ -92,12 +93,13 @@ def create_dialog_boxes():
     return dyn, keypath, co_decode
 
 
-def process_file(file_names, yes_no, cipher, pathkey, delete):
+def process_file(file_names, code, cipher, pathkey, delete):
     """ process files to code or encode """
+
     for each in file_names:
         if isfile(each):
-            filename, ext = get_filename(each, yes_no)
-            if yes_no:
+            filename, ext = get_filename(each, code)
+            if code:
                 with open(each, 'rb') as file:
                     was_processed = read_and_code(
                         cipher, file, filename, ext, pathkey)
@@ -125,12 +127,12 @@ if __name__ == "__main__":
         if RECURSIVE:
             for root, subdirectories, files in walk(locate):
                 files = [join(root, file) for file in files]
-                process_file(file_names=files, yes_no=YESNO,
+                process_file(file_names=files, code=YESNO,
                              cipher=cipher_instance, pathkey=key_path, delete=REMOVE)
         else:
             files = listdir(locate)
             files = [join(locate, file) for file in files]
-            process_file(file_names=files, yes_no=YESNO,
+            process_file(file_names=files, code=YESNO,
                          cipher=cipher_instance, pathkey=key_path, delete=REMOVE)
     else:
         locate = run_file_dialog(multiple=True)
@@ -138,5 +140,5 @@ if __name__ == "__main__":
             sys_exit()
         DYNAMIC, key_path, YESNO = create_dialog_boxes()
         cipher_instance = DynamicCipher() if DYNAMIC else StaticCipher(key_path)
-        process_file(file_names=locate, yes_no=YESNO,
+        process_file(file_names=locate, code=YESNO,
                      cipher=cipher_instance, pathkey=key_path, delete=REMOVE)
