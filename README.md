@@ -12,6 +12,12 @@ The program performs a binary read of each set file to convert it to base64 form
 
 <br/>
 
+## Use modes
+The program has two modes of use, one static, that is, using the "static encryption key" (mod_static.txt) if 2 files are encrypted, both will be encrypted with the same key.
+Dynamic mode chooses randomly 1 among N keys from "dynamic encryption key"(mod_dyn.txt) file  for each file
+
+<br/>
+
 ## Usage - file_cipher.py
 
 #### python file_cipher.py
@@ -35,3 +41,12 @@ The --remove-originals parameter indicates that the encrypted files are subseque
 <br/>
 
 ## Usage - keygen.py
+
+There are two possible keys to generate. One to use in static mode and one to use in dynamic mode.
+
+To indicate it to generate a static use key, just run:
+#### python keygen.py -s   -->  mod_static.txt
+
+and to generate a dynamic use key: 
+#### python keygen.py -d N   -->  mod_dyn.txt
+being N the number of keys to generate
