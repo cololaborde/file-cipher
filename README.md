@@ -20,22 +20,30 @@ Dynamic mode chooses randomly 1 among N keys from "dynamic encryption key"(mod_d
 
 ## Usage - file_cipher.py
 
-#### python file_cipher.py
+```bash
+#python3
+python file_cipher.py
+```
 
 Starts the GUI to select file(s) to encrypt or decrypt, you must also indicate whether the encryption mode is static or dynamic and finally a box will open to indicate the previously generated key
 
-#### python file_cipher -d
+```bash
+python file_cipher -d
+```
 
 Starts the GUI to select a directory to encrypt or decrypt the files contained therein, you must also indicate whether the encryption mode is static or dynamic and finally a box will open to indicate the key generated previously
 
-##### python file_cipher -d -r
+```bash
+python file_cipher -d -r
+```
 
 Same as the previous mode, but it recursively goes through the directories that may exist within the indicated root directory
 
-#### python file_cipher --remove-originals
-#### python file_cipher -d --remove-originals
-#### python file_cipher -d -r --remove-originals
-
+```bash
+python file_cipher --remove-originals
+python file_cipher -d --remove-originals
+python file_cipher -d -r --remove-originals
+```
 The --remove-originals parameter indicates that the encrypted files are subsequently removed, leaving only the generated encryption.
 
 <br/>
