@@ -16,7 +16,7 @@ The program performs a binary read of each set file to convert it to base64 form
 
 #### python file_cipher.py
 
-Starts the GUI to select file or files to encrypt or decrypt, you must also indicate whether the encryption mode is static or dynamic and finally a box will open to indicate the previously generated key
+Starts the GUI to select file(s) to encrypt or decrypt, you must also indicate whether the encryption mode is static or dynamic and finally a box will open to indicate the previously generated key
 
 #### python file_cipher -d
 
