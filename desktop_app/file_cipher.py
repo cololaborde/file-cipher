@@ -9,6 +9,7 @@ from cipher import StaticCipher, DynamicCipher
 
 def get_params():
     """ get params """
+
     is_dir, recursive, remove_after = False, False, False
     if '-d' in argv:
         is_dir = True
