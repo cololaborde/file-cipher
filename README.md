@@ -12,4 +12,5 @@
 The program performs a binary read of each set file to convert it to base64 format. Once the encoding is obtained, each character in it is consistently replaced based on a previously generated "key". The key can be obtained from /utils/keygen.py
 
 <br/>
+
 ## Usage
