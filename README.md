@@ -13,7 +13,7 @@ The program performs a binary read of each set file to convert it to base64 form
 <br/>
 
 ## Use modes
-The program has two modes of use, one <p style="bold">static</p>, that is, using the "static encryption key" (mod_static.txt) if 2 files are encrypted, both will be encrypted with the same key.
+The program has two modes of use, one static, that is, using the "static encryption key" (mod_static.txt) if 2 files are encrypted, both will be encrypted with the same key.
 Dynamic mode chooses randomly 1 among N keys from "dynamic encryption key"(mod_dyn.txt) file  for each file
 
 <br/>
