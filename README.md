@@ -12,7 +12,7 @@ The program performs a binary read of each set file to convert it to base64 form
 
 <br/>
 
-## Usage
+## Usage - file_cipher.py
 
 #### python file_cipher.py
 
@@ -31,3 +31,7 @@ Same as the previous mode, but it recursively goes through the directories that 
 #### python file_cipher -d -r --remove-originals
 
 The --remove-originals parameter indicates that the encrypted files are subsequently removed, leaving only the generated encryption.
+
+<br/>
+
+## Usage - keygen.py
