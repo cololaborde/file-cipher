@@ -26,9 +26,17 @@ def get_filename(filepath, yesno):
     end = "-coded" if yesno else "-decoded"
     base_path = '/'.join(filepath.split('/')[:len(filepath.split('/'))-1])
     file_name = filepath.split('/')[len(filepath.split('/')) - 1]
-    output_filename = base_path + '/' + \
-        '.'.join(file_name.split('.')[:len(file_name.split('.'))-1])
     extension = file_name.split(".")[len(file_name.split("."))-1]
+
+    splited = file_name.split('-decoded.'+extension) if yesno \
+         else file_name.split('-coded.'+extension)
+
+    if len(splited) > 1:
+        output_filename = base_path + '/' + '.'.join(splited[0].split('.'))
+    else:
+        output_filename = base_path + '/' + \
+            '.'.join(splited[0].split('.')[:len(splited[0].split('.'))-1])
+    print(output_filename)
     return output_filename + end, extension
 
 
