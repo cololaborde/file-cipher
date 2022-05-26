@@ -26,9 +26,16 @@ def get_filename(filepath, yesno):
     end = "-coded" if yesno else "-decoded"
     base_path = '/'.join(filepath.split('/')[:len(filepath.split('/'))-1])
     file_name = filepath.split('/')[len(filepath.split('/')) - 1]
-    output_filename = base_path + '/' + \
-        '.'.join(file_name.split('.')[:len(file_name.split('.'))-1])
     extension = file_name.split(".")[len(file_name.split("."))-1]
+
+    splited = file_name.split('-decoded.'+extension) if yesno \
+         else file_name.split('-coded.'+extension)
+
+    if len(splited) > 1:
+        output_filename = base_path + '/' + '.'.join(splited[0].split('.'))
+    else:
+        output_filename = base_path + '/' + \
+            '.'.join(splited[0].split('.')[:len(splited[0].split('.'))-1])
     return output_filename + end, extension
 
 
@@ -105,7 +112,6 @@ def process_file(file_names, code, cipher, pathkey, delete):
                     was_processed = read_and_code(
                         cipher, file, filename, ext, pathkey)
             else:
-                # como hacer para validar que un txt sea un codeado?
                 with open(each, 'r', encoding='utf8') as file:
                     was_processed = read_and_decode(
                         cipher, file, filename, pathkey)
@@ -118,13 +124,20 @@ if __name__ == "__main__":
 
     DIR, RECURSIVE, REMOVE = get_params()
 
+    locate = run_file_dialog(multiple=True) if not DIR \
+        else run_file_dialog(file_types=None, multiple=False, open_dir=True)
+
+    if not locate:
+        sys_exit()
+
+    DYNAMIC, key_path, YESNO = create_dialog_boxes()
+
+    if not key_path:
+        sys_exit()
+
+    cipher_instance = DynamicCipher() if DYNAMIC else StaticCipher(key_path)
+
     if DIR:
-        locate = run_file_dialog(
-            file_types=None, multiple=False, open_dir=True)
-        if len(locate) == 0:
-            sys_exit()
-        DYNAMIC, key_path, YESNO = create_dialog_boxes()
-        cipher_instance = DynamicCipher() if DYNAMIC else StaticCipher(key_path)
         if RECURSIVE:
             for root, subdirectories, files in walk(locate):
                 files = [join(root, file) for file in files]
@@ -136,10 +149,5 @@ if __name__ == "__main__":
             process_file(file_names=files, code=YESNO,
                          cipher=cipher_instance, pathkey=key_path, delete=REMOVE)
     else:
-        locate = run_file_dialog(multiple=True)
-        if len(locate) == 0:
-            sys_exit()
-        DYNAMIC, key_path, YESNO = create_dialog_boxes()
-        cipher_instance = DynamicCipher() if DYNAMIC else StaticCipher(key_path)
         process_file(file_names=locate, code=YESNO,
                      cipher=cipher_instance, pathkey=key_path, delete=REMOVE)
