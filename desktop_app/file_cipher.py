@@ -4,7 +4,6 @@ from os.path import isfile, join
 from os import remove, listdir, walk
 from sys import argv, exit as sys_exit
 from tkinter import filedialog, messagebox, Tk
-from tkinter.dialog import DIALOG_ICON
 from cipher import StaticCipher, DynamicCipher
 
 
@@ -113,7 +112,6 @@ def process_file(file_names, code, cipher, pathkey, delete):
                     was_processed = read_and_code(
                         cipher, file, filename, ext, pathkey)
             else:
-                # como hacer para validar que un txt sea un codeado?
                 with open(each, 'r', encoding='utf8') as file:
                     was_processed = read_and_decode(
                         cipher, file, filename, pathkey)
@@ -129,10 +127,14 @@ if __name__ == "__main__":
     locate = run_file_dialog(multiple=True) if not DIR \
         else run_file_dialog(file_types=None, multiple=False, open_dir=True)
 
+    if not locate:
+        sys_exit()
+
     DYNAMIC, key_path, YESNO = create_dialog_boxes()
 
-    if not locate or not key_path:
-            sys_exit()
+    if not key_path:
+        sys_exit()
+
     cipher_instance = DynamicCipher() if DYNAMIC else StaticCipher(key_path)
 
     if DIR:
