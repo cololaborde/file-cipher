@@ -4,6 +4,7 @@ from os.path import isfile, join
 from os import remove, listdir, walk
 from sys import argv, exit as sys_exit
 from tkinter import filedialog, messagebox, Tk
+from tkinter.dialog import DIALOG_ICON
 from cipher import StaticCipher, DynamicCipher
 
 
@@ -36,7 +37,6 @@ def get_filename(filepath, yesno):
     else:
         output_filename = base_path + '/' + \
             '.'.join(splited[0].split('.')[:len(splited[0].split('.'))-1])
-    print(output_filename)
     return output_filename + end, extension
 
 
@@ -126,13 +126,16 @@ if __name__ == "__main__":
 
     DIR, RECURSIVE, REMOVE = get_params()
 
-    if DIR:
-        locate = run_file_dialog(
-            file_types=None, multiple=False, open_dir=True)
-        if len(locate) == 0:
+    locate = run_file_dialog(multiple=True) if not DIR \
+        else run_file_dialog(file_types=None, multiple=False, open_dir=True)
+
+    DYNAMIC, key_path, YESNO = create_dialog_boxes()
+
+    if not locate or not key_path:
             sys_exit()
-        DYNAMIC, key_path, YESNO = create_dialog_boxes()
-        cipher_instance = DynamicCipher() if DYNAMIC else StaticCipher(key_path)
+    cipher_instance = DynamicCipher() if DYNAMIC else StaticCipher(key_path)
+
+    if DIR:
         if RECURSIVE:
             for root, subdirectories, files in walk(locate):
                 files = [join(root, file) for file in files]
@@ -144,10 +147,5 @@ if __name__ == "__main__":
             process_file(file_names=files, code=YESNO,
                          cipher=cipher_instance, pathkey=key_path, delete=REMOVE)
     else:
-        locate = run_file_dialog(multiple=True)
-        if len(locate) == 0:
-            sys_exit()
-        DYNAMIC, key_path, YESNO = create_dialog_boxes()
-        cipher_instance = DynamicCipher() if DYNAMIC else StaticCipher(key_path)
         process_file(file_names=locate, code=YESNO,
                      cipher=cipher_instance, pathkey=key_path, delete=REMOVE)
