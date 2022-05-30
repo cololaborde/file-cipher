@@ -8,7 +8,7 @@
 
 ## Description
 
-The program performs a binary read of each set file to convert it to base64 format. Once the encoding is obtained, each character is consistently replaced based on a previously generated "key". The key can be obtained from [keygen.py](desktop_app/utils/keygen.py). The result is dumped into a copy of the original file, indicating the applied operation in the name.
+file_cipher.py script read as binary each loaded file to convert it to base64 format. After that, each character is replaced consistently based on a generated key. The key can be obtained from [keygen.py](desktop_app/utils/keygen.py). The result is dumped into a copy of the original file, indicating the applied operation in the name.
 
 <br/>
 
@@ -43,7 +43,7 @@ python file_cipher.py
 
 ```bash
 #python3
-python file_cipher -d
+python file_cipher.py -d
 ```
 
 
@@ -53,7 +53,7 @@ python file_cipher -d
 
 ```bash
 #python3
-python file_cipher -d -r
+python file_cipher.py -d -r
 ```
 
 
@@ -63,9 +63,9 @@ python file_cipher -d -r
 
 ```bash
 #python3
-python file_cipher --remove-originals
-python file_cipher -d --remove-originals
-python file_cipher -d -r --remove-originals
+python file_cipher.py --remove-originals
+python file_cipher.py -d --remove-originals
+python file_cipher.py -d -r --remove-originals
 ```
 
 <br/>
