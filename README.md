@@ -8,7 +8,7 @@
 
 ## Description
 
-The program performs a binary read of each set file to convert it to base64 format. Once the encoding is obtained, each character is consistently replaced based on a previously generated "key". The key can be obtained from [keygen.py](desktop_app/utils/keygen.py). The result is dumped into a copy of the original file, indicating the applied operation in the name.
+file_cipher.py script read as binary each loaded file to convert it to base64 format. After that, each character is replaced consistently based on a generated key. The key can be obtained from [keygen.py](desktop_app/utils/keygen.py). The result is dumped into a copy of the original file, indicating the applied operation in the name.
 
 <br/>
 
@@ -33,23 +33,23 @@ Starts the GUI to select file(s) to encrypt or decrypt, you must also indicate w
 
 ```bash
 #python3
-python file_cipher -d
+python file_cipher.py -d
 ```
 
 Starts the GUI to select a directory to encrypt or decrypt the files contained therein, you must also indicate whether the encryption mode is static or dynamic and finally a box will open to indicate the key generated previously
 
 ```bash
 #python3
-python file_cipher -d -r
+python file_cipher.py -d -r
 ```
 
 Same as the previous mode, but it recursively goes through the directories that may exist within the indicated root directory
 
 ```bash
 #python3
-python file_cipher --remove-originals
-python file_cipher -d --remove-originals
-python file_cipher -d -r --remove-originals
+python file_cipher.py --remove-originals
+python file_cipher.py -d --remove-originals
+python file_cipher.py -d -r --remove-originals
 ```
 The --remove-originals parameter indicates that the encrypted files are subsequently removed, leaving only the generated encryption.
 
